@@ -1,0 +1,313 @@
+﻿@model sarey_erp.Models.usuarios
+@{
+    ViewBag.Title = "Editar Usuario";
+}
+
+<div class="content-wrapper">
+    <br class="xs-hidden">
+    <br class="xs-hidden">
+    <br class="xs-hidden">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h3>Editar Usuario:</h3>
+            <br />
+            <form role="form" method="post" action="@Url.Action("editarUsuario", "Usuarios")" enctype="multipart/form-data">
+                <input type="text" name="nombreAnterior" id="nombreAnterior" placeholder="Nombre de Usuario" value="@Model.nombre" required hidden>
+                <div class="form-group">
+                    <div id="divNombreNombre" class="form-group">
+                        <label class="control-label">Nombre de usuario:</label>
+                        <input type="text" class="form-control" name="nombreUsuario" id="nombreUsuario" value="@Model.nombre" placeholder="Nombre de Usuario" required>
+                        <span id="spanInputNombre" class="glyphicon form-control-feedback"></span>
+                        <div id="mensajeErrorNombre" class="alert alert-danger hidden">
+                            <strong>Error: </strong> ya existe un usuario con este nombre
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Nombre completo:</label>
+                    <input class="form-control" placeholder="Nombre Completo" name="nombreCompleto" value="@Model.nombreCompleto" type="text" required>
+                </div>
+                <div class="form-group">
+                    <div id="divRut" class="form-group">
+                        <label class="control-label">Rut:</label>                        
+                        <input class="form-control" placeholder="Sin puntos ni guion"
+                                name="rut" id="rut" value="@Model.rut" type="text" required>
+                        <span id="spanInputRut" class="glyphicon form-control-feedback"></span>
+                        <div id="mensajeErrorRut" class="alert alert-danger hidden">
+                            <strong>Error: </strong> El rut ingresado tiene un formato erróneo
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Correo electrónico:</label>l
+                    <input class="form-control" placeholder="Correo Electrónico" name="correo" type="email" value="@Model.correoElectronico" required>
+                </div>
+                @if (Model.telefono == 0)
+                {
+                    <div class="form-group">
+                        <label class="control-label">Celular:</label>
+                        <input class="form-control" placeholder="Celular (8 dígitos)" name="celular" type="text" value="" pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]">
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label">Celular:</label>
+                        <input class="form-control" placeholder="Celular (8 dígitos)" name="celular" type="text" value="@Model.telefono" pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]">
+                    </div>
+                }
+                <div class="form-group">
+                    <label class="control-label">Rol:</label>
+                    <select name="rol" id="rol" class="form-control">
+                        <option value="Seleccione una opción">Seleccione una opción</option>
+                        @{
+                            List<string> tipos = ViewBag.roles;
+
+                            foreach (string tipo in tipos)
+                            {
+                                string nombreMostrar = "";
+                                bool inicio = true;
+
+                                if (tipo.Equals("admin")) {
+                                    nombreMostrar = "Gerencia";
+                                }
+                                else 
+                                {
+                                    foreach (char caracter in tipo.ToCharArray())
+                                    {
+                                        if (char.IsUpper(caracter))
+                                        {
+                                            if (inicio)
+                                            {
+                                                nombreMostrar += caracter + "";
+                                            }
+                                            else
+                                            {
+                                                nombreMostrar += " " + caracter + "";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (inicio)
+                                            {
+                                                nombreMostrar += char.ToUpper(caracter) + "";
+                                            }
+                                            else
+                                            {
+                                                nombreMostrar += caracter + "";
+                                            }
+                                        }
+                                        inicio = false;
+                                    }
+                                }
+                                if (@Model.rol.Equals(tipo))
+                                {
+                                    <option value="@tipo" selected>@nombreMostrar</option>
+                                }
+                                else
+                                {
+                                    <option value="@tipo">@nombreMostrar</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Cargo:</label>
+                    <input name="cargo" id="cargo" type="text" class="form-control" value="@Model.cargo" required>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Password:</label>
+                    <input class="form-control" placeholder="Password" name="password" id="password" type="password" value="" required>
+                </div>
+                <div class="form-group">
+                    <div id="divNombre" class="form-group">
+                        <label class="control-label">Repetición del Password:</label>
+                        <input class="form-control" placeholder="Repita el password"
+                               name="password2" id="password2" type="password" value="" required>
+                        <span id="spanInput" class="glyphicon form-control-feedback"></span>
+                        <div id="mensajeError" class="alert alert-danger hidden">
+                            <strong>Error: </strong> el password no coincide con su repetición
+                        </div>
+                    </div>
+                </div>
+                <!-- Change this to a button or input when using this as a form -->
+                <div class="modal-footer">
+                    <a href="@Url.Action("Index","Usuarios")" class="btn btn-lg btn-default">Cancelar</a>
+                    <button type="submit" id="boton" class="btn btn-lg btn-primary" disabled>Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $("#nombreUsuario").change(function () {
+            verificarCampos();
+        });
+
+        $("#password").change(function () {
+            verificarCampos();
+        });
+
+        $("#password2").change(function () {
+            verificarCampos();
+        });
+
+        $("#rol").change(function () {
+            verificarCampos();
+        });
+
+        function formatearRut() {
+            rut = $("#rut").val();
+
+            arreglo = rut.split('');
+
+            rut = "";
+            var regex = new RegExp("^[0-9,k,K]+$");
+
+            for (i = 0; i < arreglo.length; i++) {
+
+                key = arreglo[i] + "";
+
+                if (regex.test(key)) {
+                    rut = rut + key;
+                }
+            }
+            $("#rut").val(rut);
+        }
+
+        $("#rut").change(function () {
+
+            formatearRut();
+            verificarCampos();
+        });
+
+        function verificarCampos() {
+            var habilitarBoton = true;
+            
+            var rol = $("#rol").val();
+            if (rol == "Seleccione una opción") {
+                habilitarBoton = false;
+            }
+
+            var nueva = $("#password").val();
+            var nueva2 = $("#password2").val();
+
+            if (nueva == "" || nueva2 == "") {
+                habilitarBoton = false;
+            }
+            else {
+
+                if (nueva == nueva2) {
+                    $("#divNombre").removeClass(" has-error");
+                    $("#divNombre").addClass(" has-feedback");
+                    $("#divNombre").addClass(" has-success");
+                    $("#spanInput").addClass("glyphicon-ok");
+                    $("#spanInput").removeClass("glyphicon-remove");
+                    $("#mensajeError").addClass("hidden");
+                }
+                else {
+                    habilitarBoton = false;
+                    $("#divNombre").addClass(" has-error");
+                    $("#divNombre").addClass(" has-feedback");
+                    $("#divNombre").removeClass(" has-success");
+                    $("#spanInput").addClass("glyphicon-remove");
+                    $("#spanInput").removeClass("glyphicon-ok");
+                    $("#mensajeError").removeClass("hidden");
+                }
+            }
+
+            var nombreUsuario = $("#nombreUsuario").val();
+            $.ajax({
+                url: "existeUsuario",
+                data: { "nombreUsuario": nombreUsuario },
+
+                success: function (retorno) {
+
+                    console.log("¿Existe usuario? " + retorno);
+
+                    if (retorno == "false" || $("#nombreAnterior").val() == nombreUsuario) {
+                        $("#divNombreNombre").removeClass(" has-error");
+                        $("#divNombreNombre").addClass(" has-feedback");
+                        $("#divNombreNombre").addClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-ok");
+                        $("#spanInputNombre").removeClass("glyphicon-remove");
+                        $("#mensajeErrorNombre").addClass("hidden");
+                    }
+                    else {
+
+                        habilitarBoton = false;
+
+                        $("#divNombreNombre").addClass(" has-error");
+                        $("#divNombreNombre").addClass(" has-feedback");
+                        $("#divNombreNombre").removeClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-remove");
+                        $("#spanInputNombre").removeClass("glyphicon-ok");
+                        $("#mensajeErrorNombre").removeClass("hidden");
+                    }
+                    rut = $("#rut").val();
+
+                    console.log("Rut: " + rut);
+
+                    if (rut == "") { habilitarBoton = false; }
+                    else {
+                        $.ajax({
+                            url: "verificarRut",
+                            data: { "rut": rut },
+
+                            success: function (retorno) {
+
+                                console.log("Retorno: " + retorno);
+
+                                if (retorno == "true") {
+                                    $("#divRut").removeClass(" has-error");
+                                    $("#divRut").addClass(" has-feedback");
+                                    $("#divRut").addClass(" has-success");
+                                    $("#spanInputRut").addClass("glyphicon-ok");
+                                    $("#spanInputRut").removeClass("glyphicon-remove");
+                                    $("#mensajeErrorRut").addClass("hidden");
+                                }
+                                else {
+                                    habilitarBoton = false;
+
+                                    $("#divRut").addClass(" has-error");
+                                    $("#divRut").addClass(" has-feedback");
+                                    $("#divRut").removeClass(" has-success");
+                                    $("#spanInputRut").addClass("glyphicon-remove");
+                                    $("#spanInputRut").removeClass("glyphicon-ok");
+                                    $("#mensajeErrorRut").removeClass("hidden");
+                                }//*/
+
+                                if (habilitarBoton) {
+                                    $("#boton").removeAttr("disabled");
+                                }
+                                else {
+                                    $("#boton").attr("disabled", "disabled");
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        $('#rut').bind('keypress', function (event) {
+            var regex = new RegExp("^[0-9,k,K]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+        
+        $(document).on("keypress", 'form', function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+}

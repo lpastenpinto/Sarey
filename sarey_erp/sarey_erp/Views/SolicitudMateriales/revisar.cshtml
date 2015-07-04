@@ -1,0 +1,411 @@
+﻿@{
+    ViewBag.Title = "revisar";
+    int i = 0;
+}
+@{
+    sarey_erp.Models.solicitud_materiales Sol = new sarey_erp.Models.solicitud_materiales();// ViewData["solicitud"];
+    Sol = (sarey_erp.Models.solicitud_materiales)ViewData["solicitud"];
+
+        
+    DateTime fecha = new DateTime();
+    fecha = @Sol.fecha;
+    ViewBag.Fecha = fecha.ToString("d");
+       
+    
+}
+@section scripts{
+    <script>
+
+    $(document).ready(function () {
+        $(".boton_agregar_item").click(function () {
+            var $tableBody = $('#tabla_pedidos').find("tbody");
+            $trLast = $tableBody.find("tr:last"),
+
+            $trNew = $trLast.clone();
+            $trNew.find(':input').val('').end();
+            $trNew.find('.pres_partida').text('');
+            $trNew.find('.pres_item').text('');
+            $trNew.find('.partida').attr('name', 'nueva_partida');
+            $trNew.find('.unidad').attr('name', 'nueva_unidad');
+            $trNew.find('.itemSolicitud').attr('name', 'nuevo_itemSolicitud');
+            $trNew.find('.itemSolicitud').removeAttr('readonly');
+            $trNew.find('.cantidad').attr('name', 'nueva_cantidad');
+            $trNew.find('.dimensiones').attr('name', 'nueva_dimensiones');
+            $trNew.find('.item').attr('name', 'nuevo_item');
+            $trNew.find('.boton_eliminarItem').attr('onclick',null);
+
+            $trNew.find('.boton_eliminarItem').addClass("boton");
+            $trNew.find('.boton_eliminarItem').removeClass( "boton_eliminarItem" );
+            $trLast.after($trNew);
+            return false;
+        });
+        $(document).on("click", ".boton", function () {
+            $(this).closest('tr').remove();
+            return false;
+        });
+    });
+
+
+    function validarFormulario() {
+        var retorno = true;
+        var select = document.getElementById("id_faenaForm");
+
+        var cantidadItems = $('.form-control').length;
+        if (cantidadItems < 3) {
+            alert("La solicitud no tiene ningun elemento");
+            return retorno = false;
+        }
+        return retorno;
+    }
+
+    Array.prototype.contains = function (v) {
+        return this.indexOf(v) > -1;
+    }
+
+
+    function cambiarItem(elemento) {
+        var res = elemento.value.split("/");
+        var idItem = res[1];  
+        var id_faena = "";
+        @{
+            @:id_faena='@Sol.id_faena';
+                }
+        var id_partida = $(elemento).closest('tr').find('.partida').val();
+        $.ajax({
+            url: "/SolicitudMateriales/obtenerPresupuestoItem", data: { "iditem": idItem, "idpartida": id_partida, "idfaena": id_faena },
+            success: function (retorno) {
+                $(elemento).closest('tr').find('.pres_item').text(formato_precio(retorno));
+
+            }
+        });
+    }
+
+       
+    function eliminarItem(nombre_item, id_solicitud, id_partida,numero_item_partida,elemento) {
+        var r = confirm("Seguro que quiere eliminar el item " + nombre_item + " de la solicitud " + id_solicitud);
+        if (r==true) {
+            $.ajax({
+                url: "/SolicitudMateriales/eliminarItemDeSolicitud", data: { "item": nombre_item, "solicitud": id_solicitud, "id_partida": id_partida, "numero_item_partida": numero_item_partida },
+                success: function (data) {
+                    if(data=="True"){
+                        $(elemento).closest('tr').remove();
+                    }
+                }
+            });
+        }
+        return false;
+    }
+    function cambiarPartida(elemento) {
+        var id_partida = elemento.value;
+        var selectItem = $(elemento).closest('tr').find('.item');
+        var id_faena = "";
+        @{
+                @:id_faena='@Sol.id_faena';
+                }
+
+        $.getJSON('/SolicitudMateriales/obtenerItemsPartida', { "id_faena": id_faena, "id_partida": id_partida },
+           function (data) {
+               $(selectItem).empty();
+               $(selectItem).append("<option>Seleccione un Item</option>");
+               $.each(data, function (i, item) {
+                   $(selectItem).append("<option value='"
+                      + item.numero + "/" + item.nombre + "'>" + item.nombre
+                      + "</option>");
+               });
+           });
+
+        $.ajax({
+            url: "/SolicitudMateriales/obtenerPresupuestoPartida", data: { "idfaena": id_faena, "idpartida": id_partida },
+            success: function (retorno) {
+
+                $(elemento).closest('tr').find('.pres_partida').text(formato_precio(retorno));
+            }
+        });
+
+    }
+
+
+        function formato_precio(n) {
+            var number = new String(n);
+            var result = "";
+            isNegative = false;
+            if (number.indexOf("-") > -1) {
+                number = number.substr(1);
+                isNegative = true;
+            }
+
+            while (number.length > 3) {
+                result = '.' + number.substr(number.length - 3) + result;
+
+                number = number.substring(0, number.length - 3);
+
+            }
+            result = number + result;
+            if (isNegative) result = '-' + result;
+          
+            return '$' + result;
+        }
+        
+
+    </script>
+}
+
+
+<div class="content-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+
+                <h3 class="text-center">Solicitud de Materiales N:@Sol.id_solicitud</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-8">
+                Fecha Solicitud:@ViewBag.Fecha
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-4">
+                Nombre del Solicitante
+            </div>
+            <div class="col-md-8">@Sol.nombre_solicitante</div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-4">
+                Faena/Obra
+            </div>
+            <div class="col-md-8">
+                @Sol.id_faena
+            </div>
+        </div>
+
+        
+        @{
+            if (!@Sol.numero_folio.Equals("")) { 
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        Numero Folio
+                    </div>
+                    <div class="col-md-8">
+                        @Sol.numero_folio
+                    </div>
+                </div>
+            }
+        }
+
+
+
+        <br />
+        <br />
+        <br />
+
+        <div class="row">
+            <div class="center-block">
+                <h4 class="text-center">Pedido</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <form action="@Url.Action("revisarSolicitud", "SolicitudMateriales")" role="form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="numero_solicitudForm" name="idFaena" value="@Sol.id_faena" />
+
+                    <input type="hidden" id="numero_solicitudForm" name="numero_solicitudForm" value="@Sol.id_solicitud" />
+                    <table class="table table-hover" id="tabla_pedidos">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Cantidad</th>
+                                <th class="col-md-2">Unidad</th>
+                                <th class="col-md-4">Item</th>
+                                <th class="col-md-2">Dimensiones</th>
+                                <th class="col-md-2">Ítem de Partida</th>
+                                <th>Pres. Ítem</th>
+                                <th>Pres. Mat.</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (sarey_erp.Models.itemSolicitudMateriales ItemsSolicitud in (List<sarey_erp.Models.itemSolicitudMateriales>)ViewData["itemSolicitud"])
+                            {
+                                i++;
+                                string Item = @ItemsSolicitud.nombre_item;
+                                <tr>
+                                    <td>
+                                        <input min="1" class="cantidad form-control" type="number" name="cantidad" value="@ItemsSolicitud.cantidad" required />
+                                    </td>
+                                    <td>
+                                        <select class="form-control unidad" name="unidad" id="unidad">
+                                            @foreach (string Unidad in (List<string>)ViewData["unidad"])
+                                            {
+                                                if (@ItemsSolicitud.unidad.Equals(@Unidad))
+                                                {
+                                                    <option value="@Unidad" selected>@Unidad</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@Unidad">@Unidad</option>
+                                                }
+                                            }
+                                        </select>
+
+                                    </td>
+                                    <td>
+                                        <input class="itemSolicitud form-control" name="itemSolicitud" readonly value="@ItemsSolicitud.nombre_item" />
+
+                                    </td>
+                                    <td>
+                                        <input id="dimensiones@{@i}" class="dimensiones form-control" type="text" name="dimensiones" value="@ItemsSolicitud.dimensiones" />
+
+                                    </td>
+                                    <td>
+                                        <script type="text/javascript">
+                                            @{
+                                                <text></text>
+                                            }
+                                        </script>
+
+
+
+                                        <select name="partida" id="partida" class="partida form-control" onchange="cambiarPartida(this)" required>
+                                            @foreach (sarey_erp.Models.partida Partidas in (List<sarey_erp.Models.partida>)ViewData["partidasFaena"])
+                                            {
+                                                if (@ItemsSolicitud.id_partida.Equals(@Partidas.id_partida))
+                                                {
+                                                    <option value="@Partidas.id_partida" selected>@Partidas.descripcion-@Partidas.id_partida</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@Partidas.id_partida">@Partidas.descripcion-@Partidas.id_partida</option>
+                                                }
+                                            }
+
+                                        </select>
+                                        <br />
+                                        <div class="form-group">
+                                            <div class="col-lg-12 control-label"><span>Materiales</span></div>
+                                            <div class="col-lg-12">
+                                                <select class="form-control item" name="item" onchange="cambiarItem(this)" required>
+                                                    <option value="@ItemsSolicitud.numero_item_partida/@ItemsSolicitud.nombre_item_partida" selected>@ItemsSolicitud.nombre_item_partida</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div class="pres_partida text-right">@{ decimal numericValue = Convert.ToInt32(@ItemsSolicitud.presupuesto_partida);
+                                                                     string formatted = numericValue.ToString("#,##0"); 
+                                                                     ViewBag.precio_presupuesto_partida = '$'+formatted;
+                                                                  }
+                                                          @ViewBag.precio_presupuesto_partida
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="pres_item text-right">
+                                            @{   decimal numericValue_ = Convert.ToInt32(@ItemsSolicitud.presupuesto_item);
+                                                 string formatted_ = numericValue_.ToString("#,##0"); 
+                                                ViewBag.precio_presupuesto_item = '$' + formatted_;
+                                            }
+                                            @ViewBag.precio_presupuesto_item                                        
+                                        </div>
+                                    </td>
+
+                                    @{
+                                        if ((@ViewBag.rolSession.Equals("oficinaTecnica") || @ViewBag.rolSession.Equals("admin")) && @ViewBag.nombre_revision_oficina.Equals(""))
+                                        {
+
+                                            <td>
+                                                <button class="boton_eliminarItem btn btn-primary" onclick="return eliminarItem('@ItemsSolicitud.nombre_item','@Sol.id_solicitud','@ItemsSolicitud.id_partida','@ItemsSolicitud.numero_item_partida',this)">Eliminar</button>
+                                            </td>
+                                        }
+                                    }
+
+                                </tr>
+
+
+
+                            }
+
+                        </tbody>
+                    </table>
+                    @{
+                        if ((@ViewBag.rolSession.Equals("oficinaTecnica") || @ViewBag.rolSession.Equals("admin")) && @ViewBag.nombre_revision_oficina.Equals(""))
+                        {
+
+                                <div class="row">
+                                    <div class="col-md-2 col-md-offset-10"><button class="btn btn-success btn-block boton_agregar_item">Agregar Item</button></div>
+                                </div>
+                            }
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>
+                                Recepcion Solicitud
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            Nombre
+                        </div>
+                        <div class="col-md-6">
+                            @ViewBag.solicitante
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            Fecha
+                        </div>
+                        <div class="col-md-6">
+                            @ViewBag.fecha_solicitud
+                        </div>
+                    </div>
+                    <br /><br />
+
+                    @{
+                            if (!@ViewBag.nombre_revision_oficina.Equals(""))
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>
+                                            Recepcion Oficina Tecnica
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Nombre
+                                    </div>
+                                    <div class="col-md-6">
+                                        @ViewBag.nombre_revision_oficina
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Fecha
+                                    </div>
+                                    <div class="col-md-6">
+                                        @ViewBag.fecha_revision_oficina
+                                    </div>
+                                </div>
+
+                            }
+                        if ((@ViewBag.rolSession.Equals("oficinaTecnica") || @ViewBag.rolSession.Equals("admin")) && @ViewBag.nombre_revision_oficina.Equals(""))
+                            {
+                                <div class="col-sm-3 col-sm-offset-9">
+                                    <button type="submit" class="btn btn-primary btn-block btn-lg" onclick="return validarFormulario()">Autorizar</button>
+                                </div>
+                            }
+}
+                    <br /><br /><br />
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+

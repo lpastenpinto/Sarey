@@ -1,0 +1,228 @@
+﻿@{
+    ViewBag.Title = "datosPersonales";
+    
+}
+@{
+    sarey_erp.Models.trabajador Trabajador = new sarey_erp.Models.trabajador();// ViewData["solicitud"];
+    Trabajador = (sarey_erp.Models.trabajador)ViewData["trabajador"];
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h3 class="text-center">Trabajador</h3>
+
+
+            <div class="col-sm-12">
+                <form action="@Url.Action("guardarDatosPersonales","Trabajador")" class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" value="@Trabajador.rut" name="rutTrabajador"/>
+                    <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                        <tbody>
+                            @{
+                                <tr>
+                                    <td style="border: 1px solid black !important">Rut</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.rut</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Nombre</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.nombres @Trabajador.apellidos</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                    <div class="clearfix"></div>
+                                                                                                 
+                    
+                    <div class="form-group">
+                        <label class="control-label">Direccion</label>
+                        <input class="form-control" type="text" id="direccion" name="direccion" value="@Trabajador.direccion" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Telefono</label>
+                        <input class="form-control" type="text" id="telefono" name="telefono" value="@Trabajador.telefono" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Cargo</label>
+                        <input class="form-control" type="text" id="cargo" name="cargo" value="@Trabajador.cargo" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Obra</label>
+                        <select class="form-control" name="obra" id="obra" required>
+                            @foreach (sarey_erp.Models.faena Faena in (List<sarey_erp.Models.faena>)ViewData["obras"])
+                            {
+                                if (@Trabajador.obra.Equals(@Faena.nombre))
+                                {
+                                    <option value="@Faena.nombre" selected>@Faena.nombre</option>
+                                }
+                                else
+                                {
+                                    <option value="@Faena.nombre">@Faena.nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label">Tipo de Contrato</label>
+                        <select class="form-control" name="tipo_contrato" id="tipo_contrato">
+                            @{
+                                if (@Trabajador.tipo_contrato.Equals("Fijo"))
+                                {
+                                    <option value="Fijo" selected>Fijo</option>
+                                    <option value="Indefinido">Indefinido</option>
+                                }
+                                else
+                                {   <option value="Fijo">Fijo</option>
+                                    <option value="Indefinido" selected>Indefinido</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    @{ if (@Trabajador.tipo_regimen.Equals("Antiguo")) { 
+                            <div class="form-group" id="divPorcentajeAFC">
+                                <label class="control-label">% AFC</label>
+                                <input class="form-control decimal" type="text" id="porcentajeAFC" name="porcentajeAFC" value="@Trabajador.porcentajeAFC" />
+                            </div>
+                        }
+                    }
+
+                    <div class="form-group">
+                        <label class="control-label">APV</label>
+                        <select class="form-control" name="apv" id="apv">
+                             @{ if (@Trabajador.porcentajeAPV == 0) {  
+                                    <option value="No" selected>No</option>
+                                    <option value="Si">Si</option>
+                                }
+                                else
+                                {
+                                    <option value="No">No</option>
+                                    <option value="Si" selected>Si</option>
+                                }
+                            }
+                        </select>
+                    </div>                                       
+
+                    <div class="form-group" id="divPorcentajeAPV"
+                         @{ if (@Trabajador.porcentajeAPV == 0) {  <text>
+                         hidden
+                         </text>         } }>
+                        <label class="control-label">% APV</label>
+                        <input class="form-control decimal" id="porcentajeAPV" value="@Trabajador.porcentajeAPV" name="porcentajeAPV" />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label">AFP</label>
+                        <select class="form-control" name="afp" id="afp" required>
+                            @foreach (sarey_erp.Models.afp AFP in (List<sarey_erp.Models.afp>)ViewData["listaAFP"])
+                            {
+                                if (@Trabajador.afp.Equals(@AFP.nombre_afp))
+                                {
+                                    <option value="@AFP.nombre_afp" selected>@AFP.nombre_afp</option>
+                                }
+                                else
+                                {
+                                    <option value="@AFP.nombre_afp">@AFP.nombre_afp</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" id="divPorcentajeAFP"
+                         @{ if (@Trabajador.porcentajeAFP == 0) {  <text>
+                         hidden
+                         </text>         } }>
+                        <label class="control-label">% AFP</label>
+                        <input class="form-control decimal" id="porcentajeAFP" value="@Trabajador.porcentajeAFP" name="porcentajeAFP" />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label">Salud</label>
+                        <select class="form-control" name="salud" id="salud" required>
+
+                            if (@Trabajador.salud.Equals("Fonasa")) {
+                            <option value="Fonasa" selected>Fonasa</option>
+                            }
+                            @foreach (sarey_erp.Models.isapre ISAPRE in (List<sarey_erp.Models.isapre>)ViewData["listaIsapres"])
+                            {
+                                if (@Trabajador.salud.Equals(@ISAPRE.nombre_isapre))
+                                {
+                                    <option value="@ISAPRE.nombre_isapre" selected>@ISAPRE.nombre_isapre</option>
+                                }
+                                else
+                                {
+                                    <option value="@ISAPRE.nombre_isapre">@ISAPRE.nombre_isapre</option>
+                                }
+                            }
+
+
+                        </select>
+                    </div>
+                    <div class="form-group" id="divPorcentajeSalud"
+                         @{ if (@Trabajador.porcentajeSalud == 0) {  <text>
+                         hidden
+                         </text>         } }>
+                        <label class="control-label"> Plan Isapre Cantidad UF</label>
+                        <input class="form-control decimal" type="text" id="porcentajeSalud" value="@Trabajador.porcentajeSalud"  name="porcentajeSalud" placeholder="0" /><span>(Si el plan es del 7% ingrese 0)</span>                        
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="boton" type="submit" class="btn btn-primary btn-lg">Guardar</button>
+                    </div>
+                </form>
+            </div>
+         </div>
+    </div>
+</div>     
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#apv").change(function () {
+                var apv = $("#apv").val();
+                if (apv == "Si") {
+                    $("#divPorcentajeAPV").removeAttr("hidden");
+
+                } else {
+                    $("#divPorcentajeAPV").attr("hidden", "hidden");
+
+                }
+
+            });
+
+            $("#salud").change(function () {
+                var salud = $("#salud").val();
+                if (salud == "Fonasa") {
+
+                    $("#divPorcentajeSalud").attr("hidden", "hidden");
+                } else {
+
+                    $("#divPorcentajeSalud").removeAttr("hidden");
+                    $("#porcentajeSalud").val(0);
+                    
+                }
+
+            });
+
+
+
+            $('.decimal').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[,]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,429 @@
+﻿@{
+    ViewBag.Title = "Trabajador";
+    sarey_erp.Models.trabajador Trabajador = new sarey_erp.Models.trabajador();// ViewData["solicitud"];
+    Trabajador = (sarey_erp.Models.trabajador)ViewData["trabajador"];
+    DateTime fecha_actual = DateTime.Today;
+    int mes_actual = fecha_actual.Month;
+    int anio_actual = fecha_actual.Year;
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h1 class="text-center">Datos del Trabajador <small>@(Trabajador.nombres + " " + Trabajador.apellidos)</small></h1>
+            <br />
+            <div class="row">
+                <div class="clearfix"></div>
+                <div class="col-sm-12">
+                    <h3>Datos Personales</h3>
+                    <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                        <tbody>
+                            @{
+
+                                <tr>
+                                    <td class="col-sm-6" style="border: 1px solid black !important">Rut</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.rut</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Nombre</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.nombres @Trabajador.apellidos</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Fecha de Ingreso a la Empresa</td>
+                                    <td style="border: 1px solid black !important">
+                                        @{   string fechaEmpresa = Convert.ToString(@Trabajador.fechaIngresoEmpresa);
+                                           string[] arreglo = fechaEmpresa.Split(' ');
+                                           ViewBag.fechaEmpresa = arreglo[0];
+                                        }
+                                        @ViewBag.fechaEmpresa
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Fecha de Ingreso al Sistema</td>
+                                    <td style="border: 1px solid black !important">
+                                        @{
+                                            string fechaSistema = Convert.ToString(@Trabajador.fechaIngresoSistema);
+                                            string[] arregloSistema = fechaSistema.Split(' ');
+                                            ViewBag.fechaSistema = arregloSistema[0];
+                                        }
+                                        @ViewBag.fechaSistema
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Direccion</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.direccion</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Telefono</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.telefono</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Cargo</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.cargo</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Obra</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.obra</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Porcentaje APV</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.porcentajeAPV</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">AFP</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.afp</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Salud</td>
+                                    <td style="border: 1px solid black !important">@Trabajador.salud</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("datosPersonales", "Trabajador", new { rutTrabajador = Trabajador.rut })" class="btn btn-lg btn-success">Editar Datos Personales</a>
+                    <a href="@Url.Action("Index", "finiquitos", new { rut = Trabajador.rut })" class="btn btn-lg btn-warning">Finiquitar</a>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-sm-12">
+                    <h3>Datos complementarios trabajador</h3>
+                    <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                        <tbody>
+                            @{
+                                sarey_erp.Models.infoadicional datosComplementarios = sarey_erp.Models.infoadicional.obtenerComplementariosTrabajador(Trabajador.rut);
+                                <tr>
+                                    <td class="col-sm-6" style="border: 1px solid black !important">Estado civil</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.estado_civil</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Nº Calzado</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.numero_calzado</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Talla Ropa</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.talla_ropa</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Grupo Sanguíneo</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.grupo_sangre</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Alérgico</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.alergico</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Personal destacado</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.personal_destacado</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Antecedentes de conducir</td>
+                                    <td style="border: 1px solid black !important">@datosComplementarios.antecedentes_conducir</td>
+                                </tr>
+                            
+
+                                }
+                        </tbody>
+                    </table>
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("infoAdicional", "Trabajador", new { rutTrabajador = Trabajador.rut })" class="btn btn-lg btn-success">Gestionar Datos complementarios</a>
+                </div>
+                <div class="col-sm-12">
+                    <h3>Datos de Pago:</h3>
+                    <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                        <tbody>
+                            @{
+                                sarey_erp.Models.datosPagoTrabajador datosPago = sarey_erp.Models.datosPagoTrabajador.obtenerDatosPago(Trabajador.rut);
+                                <tr>
+                                    <td class="col-sm-6" style="border: 1px solid black !important">Sueldo Base</td>
+                                    <td style="border: 1px solid black !important">@datosPago.sueldoBase</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Gratificación</td>
+                                    <td style="border: 1px solid black !important">@datosPago.gratificacion</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Bono Producción</td>
+                                    <td style="border: 1px solid black !important">@datosPago.bonoProduccion</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Bono Responsabilidad</td>
+                                    <td style="border: 1px solid black !important">@datosPago.bonoResponsabilidad</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Asignación Familiar</td>
+                                    <td style="border: 1px solid black !important">@datosPago.asignacionFamiliar</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Bono Colación</td>
+                                    <td style="border: 1px solid black !important">@datosPago.bonoColacion</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Bono Movilización</td>
+                                    <td style="border: 1px solid black !important">@datosPago.bonoMovilizacion</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Viático</td>
+                                    <td style="border: 1px solid black !important">@datosPago.viatico</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Desgaste Herramientas</td>
+                                    <td style="border: 1px solid black !important">@datosPago.desgasteHerramientas</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black !important">Cantidad Horas Semanales</td>
+                                    <td style="border: 1px solid black !important">@datosPago.cantidadHorasSemanales</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("datosPago", "Trabajador", new { rutTrabajador = Trabajador.rut })" class="btn btn-lg btn-success">Gestionar Datos de Pago</a>
+                    <a href="@Url.Action("verLiquidacion", "Trabajador", new { rutTrabajador = Trabajador.rut })" class="btn btn-lg btn-success">Generar Liquidacion</a>                
+                </div>
+                <div class="col-sm-12">
+                    <h3>Licencias:</h3>
+                    @if(sarey_erp.Models.licenciasTrabajadores.obtenerTodas(Trabajador.rut).Count>0){
+                        <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                            <thead>
+                                <tr style="border: 1px solid black !important">
+                                    <th  class="col-sm-6" style="border: 1px solid black !important">Fecha</th>
+                                    <th class="col-sm-6" style="border: 1px solid black !important">Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (sarey_erp.Models.licenciasTrabajadores licencia in sarey_erp.Models.licenciasTrabajadores.obtenerTodas(Trabajador.rut))
+                                {
+                                    <tr>
+                                        <td style="border: 1px solid black !important">@licencia.fecha.ToShortDateString()</td>
+                                        <td style="border: 1px solid black !important">@licencia.descripcion</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else {
+                        <div>
+                            <h1 class="text-center"><small>El trabajador no posee datos de licencias</small></h1>
+                        </div>
+                        <br />
+                    }
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("licencias", "Trabajador", new { rut = Trabajador.rut })" class="btn btn-lg btn-success">Administrar Licencias</a>
+                </div>
+                <div class="col-sm-12">
+                    <h3>Días no trabajados:</h3>
+                    @if(sarey_erp.Models.diasNoTrabajados.obtenerTodas(Trabajador.rut).Count>0){
+                        <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                            <thead>
+                                <tr style="border: 1px solid black !important">
+                                    <th class="col-md-2" style="border: 1px solid black !important">Fecha</th>
+                                    <th class="col-md-2" style="border: 1px solid black !important">Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (sarey_erp.Models.diasNoTrabajados dia in sarey_erp.Models.diasNoTrabajados.obtenerTodas(Trabajador.rut))
+                                {
+                                    <tr>
+                                        <td style="border: 1px solid black !important">@dia.fecha.ToShortDateString()</td>
+                                        <td style="border: 1px solid black !important">@dia.descripcion</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else {
+                    <div>
+                        <h1 class="text-center"><small>El trabajador no posee datos de días no trabajados</small></h1>
+                    </div>
+                    <br />
+                    }
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("Index", "diasNoTrabajados", new { rut = Trabajador.rut })" class="btn btn-lg btn-success">Administrar días no trabajados</a>
+                </div>
+                <div class="col-sm-12">
+                    <h3>Horas Extras</h3>
+                    @if (sarey_erp.Models.horasExtras.obtenerHorasExtrasMes(Trabajador.rut,mes_actual,anio_actual)> 0)
+                    {
+                        <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                            <thead>
+                                <tr style="border: 1px solid black !important">
+                                    <th class="col-md-2" style="border: 1px solid black !important">Fecha</th>
+                                    <th class="col-md-2" style="border: 1px solid black !important">Cantidad de Horas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (sarey_erp.Models.horasExtras horaExtra in sarey_erp.Models.horasExtras.obtenerListHorasExtrasMes(Trabajador.rut, mes_actual,anio_actual))
+                                {
+                                    <tr>
+                                        <td style="border: 1px solid black !important">@horaExtra.fecha.ToShortDateString()</td>
+                                        <td style="border: 1px solid black !important">@horaExtra.cantidadHoras</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div>
+                            <h1 class="text-center"><small>El trabajador no posee horas extras en este mes</small></h1>
+                        </div>
+                        <br />
+                    }
+                    <div class="clearfix"></div>
+                    <a href="@Url.Action("Index", "horasExtras", new { rut = Trabajador.rut })" class="btn btn-lg btn-success">Administrar Horas Extras</a>
+                </div>
+            </div>          
+            <div class="col-sm-offset-8 col-sm-4">
+                <a href="@Url.Action("Index", "Trabajador")" class="btn btn-lg btn-block btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+            </div>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+
+
+            $('#rut').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[k]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $("#apv").change(function () {
+                var apv = $("#apv").val();
+                if (apv == "Si") {
+                    $("#divPorcentajeAPV").removeAttr("hidden");
+
+                } else {
+                    $("#divPorcentajeAPV").attr("hidden", "hidden");
+
+                }
+
+            });
+
+            $("#afp").change(function () {
+                var afp = $("#afp").val();
+                if (afp == 'IPS') {
+                    $("#divPorcentajeAFP").removeAttr("hidden");
+                    $("#divPorcentajeSalud").removeAttr("hidden");
+                } else {
+                    $("#divPorcentajeAFP").attr("hidden", "hidden");
+                    $("#divPorcentajeSalud").attr("hidden", "hidden");
+
+                }
+
+            });
+            $("#rut").change(function () {
+
+                var rut = $("#rut").val();
+
+                if (validaRut(rut) == true) {
+                    $("#divRut").removeClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").addClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-ok");
+                    $("#spanInputRut").removeClass("glyphicon-remove");
+                    $("#mensajeErrorRut").addClass("hidden");
+                    $("#boton").removeAttr("disabled");
+
+                    $.ajax({
+                        url: "/Trabajador/verificarExisteTrabajador",
+                        data: { "rut": $("#rut").val() },
+
+                        success: function (retorno) {
+                            if (retorno == 'false') {
+                                $("#divRut").removeClass(" has-error");
+                                $("#divRut").addClass(" has-feedback");
+                                $("#divRut").addClass(" has-success");
+                                $("#spanInputRut").addClass("glyphicon-ok");
+                                $("#spanInputRut").removeClass("glyphicon-remove");
+                                $("#mensajeExisteRut").addClass("hidden");
+                                $("#boton").removeAttr("disabled");
+                            } else {
+                                $("#divRut").addClass(" has-error");
+                                $("#divRut").addClass(" has-feedback");
+                                $("#divRut").removeClass(" has-success");
+                                $("#spanInputRut").addClass("glyphicon-remove");
+                                $("#spanInputRut").removeClass("glyphicon-ok");
+                                $("#mensajeExisteRut").removeClass("hidden");
+                                $("#boton").attr("disabled", "disabled");
+                            }
+                        }
+                    });
+
+
+
+                } else {
+                    $("#divRut").addClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").removeClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-remove");
+                    $("#spanInputRut").removeClass("glyphicon-ok");
+                    $("#mensajeErrorRut").removeClass("hidden");
+                    $("#mensajeExisteRut").removeClass("hidden");
+                    $("#mensajeExisteRut").addClass("hidden");
+                    $("#boton").attr("disabled", "disabled");
+                }
+
+
+            });
+        });
+
+        function validaRut(campo) {
+            if (campo.length == 0) { return false; }
+            if (campo.length < 8) { return false; }
+
+            campo = campo.replace('-', '')
+            campo = campo.replace(/\./g, '')
+            $("#rut").val(campo);
+
+            var suma = 0;
+            var caracteres = "1234567890kK";
+            var contador = 0;
+            for (var i = 0; i < campo.length; i++) {
+                u = campo.substring(i, i + 1);
+                if (caracteres.indexOf(u) != -1)
+                    contador++;
+            }
+            if (contador == 0) { return false }
+
+            var rut = campo.substring(0, campo.length - 1)
+            var drut = campo.substring(campo.length - 1)
+            var dvr = '0';
+            var mul = 2;
+
+            for (i = rut.length - 1 ; i >= 0; i--) {
+                suma = suma + rut.charAt(i) * mul
+                if (mul == 7) mul = 2
+                else mul++
+            }
+            res = suma % 11
+            if (res == 1) dvr = 'k'
+            else if (res == 0) dvr = '0'
+            else {
+                dvi = 11 - res
+                dvr = dvi + ""
+            }
+            if (dvr != drut.toLowerCase()) { return false; }
+            else { return true; }
+        }
+
+
+
+    </script>
+}

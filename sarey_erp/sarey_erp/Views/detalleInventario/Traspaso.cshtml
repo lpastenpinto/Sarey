@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Traspaso";
+}
+
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">           
+            <h3 class="text-center">Realizar Traspaso de Items entre Faenas</h3>
+            <br />                
+                <form action="@Url.Action("realizarTraspaso","detalleInventario")" role="form" method="post" enctype="multipart/form-data" onsubmit="return validarFormulario();">
+                    <div class="form-group">
+                        <label class="control-label">Item</label>
+                        <input type="text" name="item" id="item" value="@ViewBag.item" readonly />
+                        <input type="hidden" name="anteriorFaena" value="@ViewBag.faena" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Cantidad de Item en Faena</label>
+                        <input type="text" name="cantidadExistenteItem" id="cantidadExistenteItem" value="@ViewBag.cantidadItem" readonly />
+                    </div>
+                    <br /><br />
+                    <div class="form-group">
+                        <label class="control-label">Seleccione Faena a traspasar</label>
+                        <select class="form-control faena" name="faena" id="faena">
+                            <option></option>
+                            @foreach (sarey_erp.Models.faena Faena in (List<sarey_erp.Models.faena>)ViewData["faenas"])
+                            {
+                                if (!@Faena.nombre.Equals(@ViewBag.faena)) { 
+                                    <option value="@Faena.nombre">@Faena.nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label"> Cantidad a traspasar</label>
+                        <input type="number" min="1" name="cantidadTraspasar" id="cantidadTraspasar" required />
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Traspasar</button>
+                    </div>
+
+                </form>
+
+</div>
+        </div>
+</div>
+
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        function cambiarItem(elemento) {
+            var valores = elemento.value.split("/");
+            var faena = valores[0];
+            var item = valores[1];
+            var cantidad = valores[2];
+            $("#cantidadExistenteItem").val(cantidad);
+        }
+
+        function validarFormulario() {            
+
+            var retorno = true;
+            var cantidadExistente = parseInt($("#cantidadExistenteItem").val());
+            
+            var cantidadTraspasar = parseInt($("#cantidadTraspasar").val());
+            var selectItem=$("#item").val();
+            var selectFaena=$("#faena").val();
+            
+            if (selectFaena == "") {
+                alert("Debe seleccionar Faena");
+                retorno = false;
+            } else if (selectItem = "") {
+                alert("Debe seleccionar Item");
+                retorno = false;
+            }
+
+            if (cantidadTraspasar > cantidadExistente) {
+                alert("No puede ingresar una cantidad de items Mayor a la existente en la faena");
+                retorno = false;
+            }
+            return retorno;
+        }
+
+</script>
+}

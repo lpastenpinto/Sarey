@@ -1,0 +1,118 @@
+﻿@model List<sarey_erp.Models.detalleInventario>
+@{
+    ViewBag.Title = "Detalle de Inventario";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Detalle de Inventario</h2>
+    </div>
+    <div class="content">
+        <div class="table-responsive">
+            @grid.GetHtml(
+            columns: grid.Columns(
+                    grid.Column("idFaena",
+                    header: string.Format("Faena o Bodega {0}", grid.SortColumn == "idFaena" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("nombreItem",
+                    header: string.Format("Ítem {0}", grid.SortColumn == "nombreItem" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("cantidad",
+                    header: string.Format("Cantidad {0}", grid.SortColumn == "cantidad" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+                    grid.Column("",
+                    header: "Cambiar Ubicación",
+                    format: @<text>
+                    @if (Session["rol"]!=null && (Session["rol"].ToString().Equals("existencias") || Session["rol"].ToString().Equals("admin")))
+                    {
+                        <a href="@Url.Action("Traspaso", "detalleInventario", new { nombreItem = item.nombreItem, idFaena = item.idFaena })"><span class='glyphicon glyphicon-transfer text-primary'></span></a>
+                    }
+                    </text>)
+            ), 
+            tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+        </div>
+        <div class="col-sm-10 col-sm-offset-1">
+            <h3>Filtros:</h3>
+            <div class="col-sm-6">
+                <label class="control-label">Faena o Bodega</label>
+                <select class="form-control" id="selectFaena">
+                    <option value="todos">Todos</option>
+                    @{
+                        List<string> faenas = ViewBag.Faenas;
+                        foreach (string faena in faenas)
+                        {
+                            if (ViewBag.Faena.Equals(faena))
+                            {
+                                <option value="@faena" selected>@faena</option>
+                            }
+                            else
+                            {
+                                <option value="@faena">@faena</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="control-label">Ítem</label>
+                <select class="form-control" id="selectItem">
+                    <option value="todos">Todos</option>
+                    @{
+                        List<string> items = ViewBag.Items;
+                        foreach (string item in items)
+                        {
+                            if (ViewBag.Item.Equals(item))
+                            {
+                                <option value="@item" selected>@item</option>
+                            }
+                            else
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        function aplicarFiltro()
+        {
+            faena = $("#selectFaena").val();
+            item = $("#selectItem").val();
+
+            url = "";
+
+            if (faena != "todos" && item != "todos") {
+                url = "/detalleInventario/IndexFiltro?faena=" + faena + "&item=" + item;
+            }
+            else if (faena != "todos")
+            {
+                url = "/detalleInventario/IndexFiltro?faena=" + faena;
+            }
+            else if (item != "todos") {
+                url = "/detalleInventario/IndexFiltro?item=" + item;
+            }
+            else {
+                url = "/detalleInventario/Index";
+            }
+
+            console.log(url);
+            window.location = url;
+        }
+
+        $("#selectFaena").change(function () {
+            aplicarFiltro();
+        });
+
+        $("#selectItem").change(function () {
+            aplicarFiltro();
+        });
+
+    </script>
+}

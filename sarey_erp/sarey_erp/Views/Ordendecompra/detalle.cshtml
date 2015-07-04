@@ -1,0 +1,44 @@
+﻿@model List<sarey_erp.Models.detalle_ordencompra>
+@{
+    ViewBag.Title = "Administrar Ordenes de compra";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Detalle orden de compra</h2>
+    </div>
+
+    <div class="content">
+        @grid.GetHtml(
+            columns: grid.Columns(
+                     grid.Column("id_numero_orden",
+            header: string.Format("N° Orden {0}", grid.SortColumn == "id" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+
+                     grid.Column("id_item",
+            header: string.Format("Item {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+                     grid.Column("precio_unitario",
+            header: string.Format("Precio Unitario {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+                     grid.Column("cantidad_item",
+            header: string.Format("Cantidad {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+            grid.Column("nombre_item_partida",
+            header: string.Format("Asignado a:", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+     
+
+        grid.Column("",
+            header: "",
+            format: @<text>
+               
+            </text>
+            )), tableStyle: "table table-hover", footerStyle: "pagination")
+
+        <div class="modal-footer">
+            <a href="@Url.Action("todas", "Ordendecompra")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left text-success"></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>

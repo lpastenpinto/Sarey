@@ -1,0 +1,1 @@
+Server=tcp:lbqo48khnl.database.windows.net,1433;Database=sarey;User ID=sarey@lbqo48khnl;Password=Server2015*;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;

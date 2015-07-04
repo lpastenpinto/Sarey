@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Administrar Horas Extras";
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            <h3 class="text-center">Agregar Nuevo Trabajador</h3>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="@Url.Action("agregarHoraExtra","horasExtras")" class="form-horizontal" role="form" method="post" enctype="multipart/form-data">                    
+                        <input type="text" value="@ViewBag.rut" hidden name="rut"/>
+                        <div class="form-group">
+                            <label class="control-label">Fecha</label>
+                            <input class="form-control fecha" name="fecha" id="fecha"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                   type="text" required>
+
+                        </div>
+                        <div class="form-group" id="divPorcentajeAFC">
+                            <label class="control-label">Cantidad de Horas</label>
+                            <input class="form-control decimal" type="text" id="cantidadHoras" name="cantidadHoras" required/>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="boton" type="submit" class="btn btn-primary btn-lg">Agregar</button>
+                        </div>
+                    </form>
+
+                    <div class="col-sm-offset-8 col-sm-4">
+                        <a href="@Url.Action("verTrabajador", "Trabajador", new { rut = @ViewBag.rut })" class="btn btn-lg btn-block btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+                    </div>
+                   
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.decimal').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[,]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}
+
+
+ 
+       
+

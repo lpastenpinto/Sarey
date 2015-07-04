@@ -1,0 +1,36 @@
+﻿@model List<sarey_erp.Models.feriados>
+@{
+    ViewBag.Title = "Administrar Días feriados";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Administrar Días feriados</h2>
+    </div>
+
+    <div class="content">
+        <div class="table-responsive">
+            @grid.GetHtml(
+            columns: grid.Columns(
+            grid.Column("dia",
+            header: string.Format("Día {0}", grid.SortColumn == "id" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+
+            grid.Column("festividad",
+            header: string.Format("Festividad {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+     
+            grid.Column("tipo_feriado",
+            header: string.Format("Tipo Feriado {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+            grid.Column("irrenunciable",
+            header: string.Format("Irrenunciable", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""))
+
+      ), tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("nuevo", "Feriado")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign text-success"></i>&nbsp;Nuevo</a>
+        </div>
+    </div>
+</div>

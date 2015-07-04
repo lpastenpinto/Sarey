@@ -1,0 +1,641 @@
+﻿@{
+    ViewBag.Title = "nueva";
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="content">
+            <div class="col-md-12">
+                <form action="@Url.Action("GuardarNueva","Ordendecompra")" role="form" method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Reemplazo Orden de compra</h2>
+                    <div class="form-group">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>N° ORDEN REEMPLAZADA</th>
+                                    <th>Orden de compra N°</th>
+                                    <th>Para el proveedor:</th>
+                                    <th>Obra:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" value="@ViewBag.NumOld" class="form-control" name="numOrdenOLD" id="numOrdenOLD" maxlength="100" placeholder="" readonly></td>
+                                    <td><input type="text" value="@ViewBag.NumeroOrden" class="form-control" name="numOrden" id="numOrden" maxlength="100" placeholder="" readonly></td>
+                                    <td>
+                                        <select class="form-control" name="proveedor" id="proveedor" required>
+                                            <option selected>Seleccione un proveedor</option>
+                                            @foreach (sarey_erp.Models.proveedores proveedor in (List<sarey_erp.Models.proveedores>)ViewData["proveedores"])
+                                            {
+                                                <option value="@proveedor.nombre_proveedor">@proveedor.nombre_proveedor</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="obra" id="obra" required>
+                                            <option selected>Seleccione una faena</option>
+                                            @foreach (sarey_erp.Models.faena obra in (List<sarey_erp.Models.faena>)ViewData["faenas"])
+                                            {
+                                                <option value="@obra.nombre">@obra.nombre</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br /><br />
+                        <div class="table-responsive">
+                            <table id="tabla_pedidos">
+                                <thead>
+                                    <tr>
+                                        <th>Escoga una solicitud de materiales:</th>
+                                        <th class="col-sm-1">Item de la solicitud</th>
+                                        <th>Partida a la que pertenece</th>
+                                        <th class="col-sm-2">Unidad</th>
+                                        <th class="col-sm-1">Valor Partida</th>
+                                        <th class="col-sm-2">Item de la partida que se asigna</th>
+                                        <th class="col-sm-1">Cantidad</th>
+                                        <th class="col-sm-2">Precio Unitario</th>
+                                        <th class="col-sm-2">% descuento</th>
+                                        <th class="col-sm-2">Monto Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="form-control" name="solicitud" id="solicitud" required></select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control select_item" name="item" id="item" required></select>
+                                        </td>
+                                        <td>
+                                            <input class="parti form-control" type="text" name="partida_asociada" id="partida_asociada" readonly>
+                                        </td>
+                                        <td>
+                                            <input class="unidad form-control" type="text" name="unidad" id="unidad" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <input class="valor_partida form-control" name="valor_partida" id="valor_partida" readonly>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" name="item_partida" id="item_partida"></select>
+                                        </td>
+                                        <td>
+                                            <input class="cantidad form-control" type="text" name="cantidad" id="cantidad" placeholder="" required>
+                                        </td>
+
+                                        <td>
+                                            <input class="precio form-control" type="text" name="precio" id="precio" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <input class="descuento form-control" type="text" name="descuento" id="descuento" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <input class="mtotal form-control" type="text" name="mtotal" id="mtotal" placeholder="" required readonly>
+                                        </td>
+                                        <td style="display:none;">
+                                            <input class="form-control" type="text" name="id_faena" id="id_faena" placeholder="" hidden>
+                                        </td>
+                                        <td style="display:none;">
+                                            <input class="form-control" type="text" name="nombre_item" id="nombre_item" placeholder="" hidden>
+                                        </td>
+                                        <td style="display:none;">
+                                            <input class="form-control" type="text" name="numero_item" id="numero_item" placeholder="" hidden>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="remove-field btn btn-primary btn-xs">Remover</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-2 col-md-offset-10">
+                                <button type="button" class="btn btn-primary btn-block add-field">Agregar Item</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="comment">Observaciones:</label>
+                                <textarea class="form-control" rows="2" id="comment" name="comment"></textarea>
+                            </div>
+                        </div>
+                        <br />
+                        <table class="table tabla_totales">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-4">Sub Total</th>
+                                    <th class="col-xs-4">I.V.A</th>
+                                    <th class="col-xs-4">Total a Pagar:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="subtotal form-control" type="text" name="subtotal" id="subtotal" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="iva" id="iva" placeholder="" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="total form-control" type="text" name="total" id="total" placeholder="" readonly>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="checkbox">
+                            <label><input name="con_iva" id="con_iva" type="checkbox">Generar Orden sin I.V.A</label>
+                        </div>
+                        <h3>Nota</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sirvase Entregar en:</th>
+                                    <th>Dirección</th>
+                                    <th>Transporte a cuenta:</th>
+                                    <th>Forma de Pago:</th>
+                                    <th>Plazo de Entrega:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" name="donde" id="donde">
+                                            <option value="Bodega Proveedor">Bodega Proveedor</option>
+                                            <option value="Obra">Obra</option>
+                                            <option value="Oficina Sarey">Oficina Sarey</option>
+                                            <option value="Proveedor">Proveedor</option>
+                                            <option value="Tienda bodega proveedor">Tienda bodega proveedor</option>
+                                        </select>
+                                        <!--  <input class="form-control" type="text" name="donde" id="donde" placeholder=""> -->
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="entrega" id="entrega" placeholder="">
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="transporte" id="transporte">
+                                            <option value="Bodega Proveedor">Proveedor</option>
+                                            <option value="Obra">Sarey</option>
+                                        </select>
+                                        <!--   <input class="form-control" type="text" name="transporte" id="transporte" placeholder=""> -->
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="pago" id="pago">
+                                            <option value="15 dias">15 días</option>
+                                            <option value="30 dias">30 días</option>
+                                            <option value="30 dias O/C">30 días O/C</option>
+                                            <option value="50% al comienzo 50% al termino del trabajo">50% al comienzo 50% al termino del trabajo</option>
+                                            <option value="oc/30 dias">oc/30 dias</option>
+                                            <option value="Ch/30 dias">Ch/30 dias</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="plazoentrega" id="plazoentrega">
+                                            <option value="1 dias">1 días</option>
+                                            <option value="3-4 dias">3-4 días</option>
+                                            <option value="12 dias">12 días</option>
+                                            <option value="15 dias">15 días</option>
+                                            <option value="30 dias">30 días</option>
+                                            <option value="inmediata">inmediata</option>
+                                            <option value="otro">otro</option>
+
+                                        </select>
+                                        <input class="form-control" type="hidden" name="plazoentrega2" id="plazoentrega2">
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+                        <h3>DE USO INTERNO</h3>
+                        <table class="interna table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre de la obra:</th>
+                                    <th>Comuna:</th>
+                                    <th>Observaciones:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="form-control" type="text" name="nombreobra" id="nombreobra" placeholder="" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="comuna" id="comuna" placeholder="" required>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="observacion" id="observacion" placeholder="" required>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="usointerno table">
+                            <thead>
+                                <tr>
+                                    <th>Cantidad de Items:</th>
+                                    <th>Presupuesto</th>
+                                    <th>O.C</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="form-control" type="text" name="item_uso" id="item_uso" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="presupuesto" id="presupuesto" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="oc" id="oc" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" name="saldo" id="saldo" readonly>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-default btn-lg" href="@Url.Action("todas","Ordendecompra")"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Cancelar</a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="btn-nuevo" disabled><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Generar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+    <script type="text/javascript">
+        function formatearValor(valor) {
+            arregloUF = valor.replace(".", ",").split('');
+
+            inicioFor = arregloUF.length;
+            if (valor.includes(".")) {
+                for (i = 0; i < arregloUF.length; i++) {
+                    if (arregloUF[i] == ',') {
+                        inicioFor = i;
+                    }
+                }
+            }
+
+            retorno = "";
+
+            for (i = inicioFor - 1; i >= 0; i--) {
+                if (i == inicioFor - 3) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 6) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 9) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 12) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 15) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 18) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else if (i == inicioFor - 21) {
+                    retorno = "." + arregloUF[i] + retorno;
+                }
+                else retorno = arregloUF[i] + retorno;
+            }
+
+            for (i = inicioFor; i < arregloUF.length; i++) {
+                retorno = retorno + arregloUF[i];
+            }
+
+            if (retorno.indexOf(".") == 0) {
+                retorno = retorno.substr(1);
+            }
+
+            return retorno;
+        }
+        $(document).on('change', '#precio', function () {
+          // $('#precio').inputNumber();
+            var precio = $(this).val();
+
+            while (precio.includes("."))
+            {
+                precio = precio.replace(".", "")
+            }
+
+            precio = formatearValor(precio);
+            console.log(precio);
+            $(this).val(precio);
+
+        });
+        $(document).on('change', '#plazoentrega', function () {
+            var value = $("#plazoentrega").val();
+         // $('#plazoentrega2').hide();
+            if (value == 'otro') {
+                $('#plazoentrega2').attr('type', 'text');
+             //   $('#plazoentrega2').show();
+             //  $('#plazoentrega').hide();
+            }
+
+        });
+        $(document).on('change', '#obra', function () {
+            var valor = $("#obra").val();
+            $(".interna #nombreobra").val(valor);
+            $.ajax(
+            {
+                url: "/Ordendecompra/rescatar_datos_solicitudes", data: { "valor_seleccion": valor },
+                success: function (retorno) {
+                    var arr = retorno.split(';');
+                    //   $("#solicitud").empty();
+                    console.log(arr[0]);
+                    if (arr.length >= 1 && (arr[0] != "")) {
+                        $("#solicitud").append('<option value="">Seleccione una solicitud</option>')
+                        for (i = 0; i < arr.length; i++) {
+                            $("#solicitud").append('<option value="' + arr[i] + '">' + arr[i] + '</option>');
+                        }
+                    }
+                }
+            });
+            $("#obra").prop('disabled', true);
+        });
+        $(document).on('change', '#solicitud', function () {
+            contaritems();
+            var valor = $(this).val();
+            esteCampo = $(this);
+
+            var listaSelect = new Array();
+
+
+            $("#tabla_pedidos .select_item").each(function () {
+                listaSelect.push($(this).val() + ";;" + $(this).closest('tr').find('#solicitud').val());
+            });
+
+            $.ajax(
+            {
+                url: "/Ordendecompra/rescatar_datos_item", data: { "valor_solicitud": valor },
+                success: function (retorno) {
+                    var datos_retorno = retorno.split(';');
+                    //var datos = retorno.split(/[()]+/).filter(function (e) { return e; });
+
+                    esteCampo.closest('tr').find("#item").empty();
+                    esteCampo.closest('tr').find("#item").append('<option value="">Seleccione un item</option>')
+                    for (i = 0; i < datos_retorno.length; i++) {
+                        esteCampo.closest('tr').find("#item").append('<option value="' + datos_retorno[i] + '">' + datos_retorno[i].split('|')[1] + '</option>')
+                    }
+
+                    for (i = 0; i < listaSelect.length; i++) {
+                        if (esteCampo.closest('tr').find("#solicitud").val() == listaSelect[i].split(";;")[1])
+                        {
+                            esteCampo.closest('tr').find("#item option[value='" + listaSelect[i].split(";;")[0] + "']").remove();
+                        }
+                    }
+                }
+
+            });
+
+        });
+        $(document).on('change','.select_item',function() {
+          //  var elemento = this;
+
+            var valor = $(this).val();
+            elemento = $(this);
+            var datos = valor.split("|");
+            $(elemento).closest('tr').find('.unidad').val(datos[2]);
+            $(elemento).closest('tr').find('.parti').val(datos[0]);
+            $(elemento).closest('tr').find('.cantidad').val(datos[3]);
+            $(elemento).closest('tr').find('#id_faena').val(datos[4]);
+            $(elemento).closest('tr').find('#nombre_item').val(datos[5]);
+            $(elemento).closest('tr').find('#numero_item').val(datos[6]);
+
+            element = $(this);
+            esteTR = $(this).closest('tr');
+
+            $("#tabla_pedidos .select_item").not(this).each(function () {
+                if (esteTR.find("#solicitud").val() == $(this).closest("tr").find("#solicitud").val()) {
+
+                    $(this).closest("tr").find("#item option[value='" + esteTR.find(".select_item").val() + "']").remove();
+                }
+            });
+
+           $.ajax(
+            {
+                url: "/Ordendecompra/rescatar_partida_asignada", data: { "valor_partida": datos[0], "valor_faena": datos[4], "valor_material": datos[5] },
+                success: function (retorno) {
+                    var datos_retorno = retorno.split(';');
+                    elemento.closest('tr').find("#item_partida").empty();
+              //      elemento.closest('tr').find("#item_partida").append('<option value="null">Reasignar el item</option>')
+                    for (i = 0; i < datos_retorno.length - 1; i++) {
+                        if (datos_retorno[i] == datos_retorno[datos_retorno.length - 1]) {
+                            elemento.closest('tr').find("#item_partida").append('<option selected value="' + datos_retorno[i] + '">' + datos_retorno[i] + '</option>')
+
+                        }
+                        else {
+                            elemento.closest('tr').find("#item_partida").append('<option value="' + datos_retorno[i] + '">' + datos_retorno[i] + '</option>')
+                        }
+
+
+                    }
+                }
+
+            });
+           $.ajax(
+           {
+               url: "/Ordendecompra/rescatar_valor_asignado", data: { "valor_partida": datos[0], "valor_faena": datos[4], "valor_material": datos[5] },
+               success: function (retorno) {
+                   var datos_retorno = retorno;
+                   var inputvalor = $(elemento).closest('tr').find('#valor_partida').val(retorno);
+               //    elemento.closest('tr').find("#item_partida").append('<option selected="selected" value="' + retorno + '">'+ retorno +'</option>')
+                   sumarpartidas();
+
+               }
+
+           });
+        });
+
+        $(document).on('change', '#item_partida', function () {
+            var valor = $(this).val();
+            selectItem = $(this).closest('tr').find('.select_item').val();
+
+            datos1 = selectItem.split("|");
+
+            elemento = $(this);
+            $.ajax(
+            {
+                url: "/Ordendecompra/rescatar_valor_asignado", data: { "valor_partida": datos1[0], "valor_faena": datos1[4], "valor_material": valor },
+                success: function (retorno) {
+                    var datos_retorno = retorno;
+                    var inputvalor = $(elemento).closest('tr').find('#valor_partida').val(retorno);
+                    //    elemento.closest('tr').find("#item_partida").append('<option selected="selected" value="' + retorno + '">'+ retorno +'</option>')
+                    sumarpartidas();
+
+                    calcularmontos();
+                    calculariva();
+                    restarsaldos();
+                }
+            });
+        });
+
+        function calculariva() {
+            var iva = (0.19) * Number($(".tabla_totales .subtotal").val());
+            var total = iva + Number($(".tabla_totales .subtotal").val());
+            $(".tabla_totales #iva").val(iva);
+            $(".tabla_totales #total").val(total);
+        }
+        $(document).on('change','#tabla_pedidos .precio',function() {
+            calcularmontos();
+            restarsaldos();
+            calculariva();
+        });
+        $(document).on('change','#tabla_pedidos .cantidad',function() {
+            calcularmontos();
+            restarsaldos();
+            calculariva();
+        });
+        $(document).on('change', '#tabla_pedidos .descuento', function () {
+            calcularmontos();
+            restarsaldos();
+            calculariva();
+        });
+        function calcularmontos() {
+            var total = 0, mtol = 0,tprice = 0;
+            $("#tabla_pedidos .cantidad").each(function () {
+                var cant = $(this).closest('tr').find('.precio').val().replace(".", "");
+                var percent = $(this).closest('tr').find('.descuento').val();
+             //   console.log("%"+percent);
+                tprice = cant * Number($(this).val());
+                var discountpercent = percent / 100;
+                var discountprice = (tprice * discountpercent);
+
+                mtol = tprice - discountprice;
+
+              //  total += cant * Number($(this).val());
+                total += mtol;
+                if (mtol > Number($(this).closest('tr').find('.valor_partida').val()))
+                {
+                    $(this).closest('tr').find('.mtotal').removeAttr("style");
+                    $(this).closest('tr').find('.mtotal').attr("style", 'color:red !important;');
+                }
+                else
+                {
+                    $(this).closest('tr').find('.mtotal').removeAttr("style");
+                    $(this).closest('tr').find('.mtotal').attr("style", 'color:green !important;');
+                }
+
+                $(this).closest('tr').find('.mtotal').val(mtol);
+            });
+            // $(".mtotal").val(total);
+            $(".tabla_totales .subtotal").val(total);
+            $(".usointerno #oc").val(total);
+        }
+        function sumarpartidas() {
+            var total2 = 0, mtol = 0;
+            $("#tabla_pedidos .valor_partida").each(function () {
+                //   var cant = $(this).closest('tr').find('.valor_partida').val();
+                total2 += Number($(this).val());
+
+                //    $(this).closest('tr').find('.valor_partida').val(mtol);
+            });
+            // $(".mtotal").val(total);
+            $(".usointerno #presupuesto").val(total2);
+            restarsaldos();
+        }
+        //----------------------------------------------------------
+        function restarsaldos() {
+            var saldo = 0;
+            $("#tabla_pedidos").each(function () {
+            saldo = Number($(".usointerno #presupuesto").val()) - Number($(".usointerno #oc").val());
+            });
+            $(".usointerno #saldo").val(saldo);
+            if (saldo < 0) {
+                $(".usointerno #saldo").removeAttr("style");
+                $(".usointerno #saldo").attr("style", 'color:red !important;');
+            }
+            else
+            {
+                $(".usointerno #saldo").removeAttr("style");
+                $(".usointerno #saldo").attr("style", 'color:green !important;');
+            }
+        }
+        function contaritems() {
+            var contar = $('.remove-field').length
+            $(".usointerno #item_uso").val(contar);
+        }
+
+        $("#con_iva").change(function () {
+            if ($("#con_iva").is(':checked')) {
+                $("#iva").addClass("hidden");
+                $("#total").addClass("hidden");
+            }
+            else
+            {
+                $("#iva").removeClass("hidden");
+                $("#total").removeClass("hidden");
+            }
+        });
+
+        $(document).ready(function () {
+            $(".add-field").click(function () {
+
+                var $tableBody = $('#tabla_pedidos').find("tbody");
+                $trLast = $tableBody.find("tr:last");
+                $temp = $trLast.clone();//.appendTo($tableBody).find('input').val('').focus();
+                $temp.find('input').val('').end();
+                $temp.find('.select_item option').remove();
+                $trNew = $temp;
+                //$trNew = $trLast.clone().find(':input').val('').end();
+                $trLast.after($trNew);
+                contaritems();
+                return false;
+            });
+            $(document).on("click", ".remove-field", function () {
+                var cantidadItems = $('.select_item').length;
+                var element = this;
+                if (cantidadItems > 1) {
+
+                    esteTR = $(element).closest('tr');
+
+                    $("#tabla_pedidos .select_item").each(function () {
+                        if ($(this).closest("tr").find("#solicitud").val() == esteTR.find("#solicitud").val())
+                        {
+                            if (esteTR.find(".select_item").has("option").length != 0 && esteTR.find(".select_item").val() != "")
+                            $(this).closest("tr").find(".select_item").append("<option value='" + esteTR.find(".select_item").val() + "'>" + esteTR.find(".select_item").val().split("/")[1] + "</option>");
+                        }
+                    });
+
+
+                    $(element).closest('tr').remove();
+
+                } else {
+                    alert("No puede eliminar este item , ya que la orden de compra debe por lo menos tener uno.")
+                }
+                //$(this).closest('tr').remove();
+                calcularmontos();
+                restarsaldos();
+                calculariva();
+                contaritems();
+                return false;
+
+            });
+        });
+
+
+        $("#proveedor").change(function ()
+        {
+            if ($("#proveedor").val() == "Seleccione un proveedor") {
+                $("#btn-nuevo").prop('disabled', true);
+            }
+            else
+            {
+                $("#btn-nuevo").prop('disabled', false);
+            }
+        });
+
+    </script>
+}
+
+

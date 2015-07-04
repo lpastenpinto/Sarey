@@ -1,0 +1,188 @@
+﻿@model List<sarey_erp.Models.hojaRutaFactura>
+@{
+    ViewBag.Title = "Hojas de Ruta del sistema";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Hojas de Ruta del Sistema</h2>
+    </div>
+    @if (ViewBag.mensaje != null && ViewBag.mensaje.Equals("agregado"))
+    {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            La Hoja de Ruta ha sido agregada con éxito
+        </div>
+    }
+    @if (ViewBag.mensaje != null && ViewBag.mensaje.Equals("eliminado"))
+    {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            La Hoja de Ruta ha sido eliminada correctamente
+        </div>
+    }
+    @if (ViewBag.mensaje != null && ViewBag.mensaje.Equals("modificado"))
+    {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            La Hoja de Ruta ha sido editada con éxito
+        </div>
+    }
+        <div class="content">
+            <div class="table-responsive">
+                @grid.GetHtml(
+            columns: grid.Columns(
+            grid.Column("numeroOrdenCompra",
+            header: string.Format("Número de Orden de Compra {0}", grid.SortColumn == "numeroOrdenCompra" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+            grid.Column("numeroFactura",
+            header: string.Format("Número de Factura {0}", grid.SortColumn == "numeroFactura" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+            grid.Column("nombreProvedor",
+            header: string.Format("Proveedor {0}", grid.SortColumn == "nombreProvedor" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+            grid.Column("fechaRecepcionFactura",
+            header: string.Format("Fecha {0}", grid.SortColumn == "nombreProvedor" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+            format: @<text>
+                @if ((DateTime.Now- item.fechaRecepcionFactura).TotalDays>3)
+                {
+                    <div style="background-color:red; color:white !important">@item.fechaRecepcionFactura.ToShortDateString()</div>
+                }
+                else
+                {
+                    <div style="background-color:white !important">@item.fechaRecepcionFactura.ToShortDateString()</div>
+                }
+            </text>),
+
+            grid.Column("",
+            header: "Adquisiciones",
+            format: @<text>
+                @if (item.adquisiciones != null)
+                {
+                    <span class='glyphicon glyphicon-ok text-primary'></span>
+                }
+                else
+                {
+                    <span class='glyphicon glyphicon-minus text-primary'></span>
+                }
+            </text>),
+                
+            grid.Column("",
+            header: "Contabilidad",
+            format: @<text>
+                @if (item.contabilidad != null)
+                {
+                    <span class='glyphicon glyphicon-ok text-primary'></span>
+                }
+                else
+                {
+                    <span class='glyphicon glyphicon-minus text-primary'></span>
+                }
+            </text>),
+                grid.Column("",
+            header: "Finanzas",
+            format: @<text>
+                @if (item.finanzas != null)
+                {
+                    <span class='glyphicon glyphicon-ok text-primary'></span>
+                }
+                else
+                {
+                    <span class='glyphicon glyphicon-minus text-primary'></span>
+                }
+            </text>),
+                grid.Column("",
+            header: "Retira Pago",
+            format: @<text>
+                @if (item.retiraPago != null)
+                {
+                    <span class='glyphicon glyphicon-ok text-primary'></span>
+                }
+                else
+                {
+                    <span class='glyphicon glyphicon-minus text-primary'></span>
+                }                
+            </text>),
+
+            grid.Column("",
+            header: "Ver/Agregar Datos",
+            format: @<text>
+                <a href="@Url.Action("general", "HojaRuta", new { idOrdenCompra = item.numeroOrdenCompra, numeroFactura = item.numeroFactura })"><span class='glyphicon glyphicon-list text-primary'></span></a>
+            </text>),
+
+            grid.Column("",
+            header: "Editar",
+            format: @<text>
+                <a href="@Url.Action("editar", "HojaRuta", new { idOrdenCompra = item.numeroOrdenCompra, numeroFactura = item.numeroFactura })"><span class='glyphicon glyphicon-edit text-primary'></span></a>
+            </text>),
+
+            @*
+            grid.Column("",
+            header: "Eliminar",
+            format: @<text>
+                <a href="#" data-toggle="modal" data-target="#myModal" onclick="funcionDelete('@item.numeroOrdenCompra', '@item.numeroFactura ')" title="Eliminar"><span class='glyphicon glyphicon-remove text-danger'></span></a>
+            </text>),
+            @**@
+
+            grid.Column("",
+            header: "Ver PDF",
+            format: @<text>
+                @if (sarey_erp.Models.hojaRutaFactura.retiraPagoHojaRuta.existenDatos(item.numeroOrdenCompra, item.numeroFactura))
+                {
+                    <a href="@Url.Action("VistaReporte_HojaRuta", "Report", new { idOrdenCompra = item.numeroOrdenCompra, numeroFactura = item.numeroFactura })" target="_blank"><span class='glyphicon glyphicon-copy text-primary'></span></a>
+                }
+            </text>)
+
+          ), tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("Index", "HojaRuta")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-list text-success"></i>&nbsp;Ver Todas</a>
+                <a href="@Url.Action("atrasadas", "HojaRuta")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-time text-danger"></i>&nbsp;Ver Atrasadas</a>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">¿Eliminar Orden de Compra?</h4>
+            </div>
+            <div class="modal-body">
+                <h5 class="text-center" id="text-modal"></h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Cancelar</button>
+                <a href="" type="button" id="btn_delete" class="btn btn-primary"><i class="glyphicon glyphicon-ok"></i>Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+
+        function funcionDelete(idOrdenCompra, numeroFactura) {
+            $("#text-modal").html("");
+            var cadena = "@Url.Action("eliminar", "HojaRuta", new { idOrdenCompra = "IDORDEN", numeroFactura = "NUMFACTURA"})";
+            cadena = cadena.replace("IDORDEN", idOrdenCompra);
+            cadena = cadena.replace("NUMFACTURA", numeroFactura);
+            cadena = cadena.replace("&amp;", "&");
+            $("#btn_delete").attr("href", cadena);
+            $("#text-modal").append("¿Estás seguro de que deseas eliminar la hoja de ruta seleccionada?");
+        }
+
+    </script>
+}

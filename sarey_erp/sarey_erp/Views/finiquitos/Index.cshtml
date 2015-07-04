@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            <h3 class="text-center">Agregar Nuevo Trabajador</h3>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="@Url.Action("finiquitarTrabajador", "finiquitos")" class="form-horizontal" role="form" method="post" enctype="multipart/form-data">                       
+                        <input name="rut" type="text" value="@ViewBag.rut" hidden/>
+                        
+                        <div class="form-group">
+                            <label class="control-label">Motivo</label>
+                            <select class="form-control" name="motivo">
+                                <option value="Renuncia Voluntaria">Renuncia Voluntaria</option>
+                                <option value="Despido Justificado">Despido Justificado</option>
+                                <option value="Despido Injustificado">Despido Injustificado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Detalle Motivo</label>
+                            <input class="form-control" type="text" name="detalle_motivo" required />
+                        </div>
+                        
+
+                        <div class="form-group">
+                            <label class="control-label">Fecha de Finiquito</label>
+                            <input class="form-control fecha" name="fecha_finiquito"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                   type="text" required>
+
+                        </div>
+                       
+                        <div class="modal-footer">
+                            <button id="boton" type="submit" class="btn btn-primary btn-lg">Finiquitar Trabajador</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {        
+
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+           
+        });
+
+        
+
+    </script>
+}

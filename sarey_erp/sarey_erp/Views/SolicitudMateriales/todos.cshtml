@@ -1,0 +1,85 @@
+﻿@model List<sarey_erp.Models.solicitud_materiales>
+@{
+    ViewBag.Title = "todos";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="header text-center">
+        <h2>Solicitudes de Materiales @ViewBag.pendiente</h2>
+    </div>
+    <div class="content">
+        <div class="table-responsive">            
+            @grid.GetHtml(
+                columns: grid.Columns(
+                grid.Column("id_solicitud",
+                header: string.Format("Solicitud {0}", grid.SortColumn == "id_solicitud" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+
+                grid.Column("fecha",
+                header: string.Format("Fecha {0}", grid.SortColumn == "fecha" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+                format: (item) => string.Format("{0:dd-MMM-yyyy}", item.fecha)
+                ),
+
+                grid.Column("nombre_solicitante",
+                header: string.Format("Nombre Solicitante {0}", grid.SortColumn == "nombre_solicitante" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+                format:
+                    @<text>
+                    @sarey_erp.Models.usuarios.obtenerUsuario(item.nombre_solicitante).nombreCompleto
+                    </text>
+                ),
+                
+                grid.Column(
+                             header: string.Format("Revisado {0}", grid.SortColumn == "nombre_solicitante" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+                    format:
+                        (item) =>
+                    {
+                        if (item.nombre_recepcion == "")
+                        {
+
+                            return Html.Raw(string.Format("<text><i class='glyphicon glyphicon-minus'></i></text>"));
+
+                        }
+                        else
+                        {
+                            //return Html.ActionLink("Edit", "Edit", new { id = item.nombre_recepcion });
+                            return Html.Raw(string.Format("<text><i class='glyphicon glyphicon-ok'></i></text>"));
+                        }
+
+                    }
+                ),
+
+                grid.Column("",
+                    header: "Revisar/Ver Datos",
+                    format: @<text>
+                        <a href="@Url.Action("revisar", "SolicitudMateriales", new { id_solicitud = @item.id_solicitud })" title="Revisar"><i class='glyphicon glyphicon-edit text-primary'></i></a>                      
+                    </text>),
+
+            grid.Column("",
+                header: "Ver PDF",
+                format: @<text>
+                    <a href="@Url.Action("VistaReporte_Solicitud", "Report", new { idSolicitudMateriales = @item.id_solicitud })" target="_blank"><span class='glyphicon glyphicon-copy text-primary'></span></a>
+                </text>)
+
+     ), tableStyle: "table table-hover", footerStyle: "pagination")
+
+
+
+
+
+
+        </div>
+        @if (Session["rol"].Equals("adquisiciones") || Session["rol"].Equals("admin") || Session["rol"].Equals("supervisorObra"))
+        { 
+        <div class="modal-footer">
+
+            <a href="@Url.Action("nueva", "SolicitudMateriales")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign text-success"></i>&nbsp;Nueva</a><br /><br />
+            <a href="@Url.Action("todos", "SolicitudMateriales")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-file"></i>&nbsp;Todos</a>
+            <a href="@Url.Action("pendientes", "SolicitudMateriales")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-time text-success"></i>&nbsp;Pendientes</a>
+             
+        </div>
+       
+        }
+    </div>
+</div>

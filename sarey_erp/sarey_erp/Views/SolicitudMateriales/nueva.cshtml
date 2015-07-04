@@ -1,0 +1,325 @@
+﻿@{
+    ViewBag.Title = "SolicitudMateriales";
+}
+<div class="content-wrapper">
+    <div class="content">
+            <div class="row">
+                <div class="col-md-12">                    
+                    <h3 class="text-center">Solicitud de Materiales N:@ViewBag.NumeroSolicitud</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-md-offset-8">
+                    Fecha Solicitud:@ViewBag.Fecha
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    Nombre del Solicitante
+                </div>
+                <div class="col-md-8"> @sarey_erp.Models.usuarios.obtenerUsuario(ViewBag.NombreUser).nombreCompleto</div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    Faena/Obra
+                </div>
+                <div class="col-md-8">
+                    <select class="form-control"  name="faena" id="faena" onchange="cambiarFaena(this)">
+                        <option>Seleccione una faena</option>
+                        @foreach (sarey_erp.Models.faena Faena in (List<sarey_erp.Models.faena>)ViewData["faenas"])
+                        {
+                            <option value="@Faena.nombre">@Faena.nombre</option>
+                        }
+                    </select>
+                </div>
+            </div> 
+                       
+
+            <br />            
+            <br />
+            <br />
+
+            <div class="row">
+                <div class="center-block">
+                    <h4 class="text-center">Pedido</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="@Url.Action("Guardar","SolicitudMateriales")" role="form" method="post" enctype="multipart/form-data">
+                        @{
+                            if (@ViewBag.rolSession.Equals("supervisorObra"))
+                            {                           
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        Numero de Folio
+                                    </div>
+                                    <div id="divNumeroFolio" class="col-md-4"> <input type="text" class="form-control" name="numero_folio" id="numero_folio" required />                                        
+                                        <span id="spanInputNumeroFolio" class="glyphicon form-control-feedback"></span><br />
+                                        <div id="mensajeErrorNumeroFolio" class="alert alert-danger hidden">
+                                            <strong>Error: </strong> ya existe una solicitud con este numero de folio
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        
+                        <br />
+                        <input type="hidden" id="id_faenaForm" name="id_faenaForm" value="" />                     
+                        <input type="hidden" id="numero_solicitudForm" name="numero_solicitudForm" value="@ViewBag.NumeroSolicitud" />
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tabla_pedidos">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-2">Cantidad</th>
+                                        <th class="col-md-2">Unidad</th>
+                                        <th class="col-md-3">Item</th>
+                                        <th class="col-md-2">Dimensiones</th>
+                                        <th class="col-md-3">Ítem de partida</th>
+                                        <th class="">Pres. Ítem</th>
+                                        <th class="">Pres. Material</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input min="1" class="form-control cantidad" type="number" name="cantidad" required />
+                                        </td>
+                                        <td>
+                                            <select class="form-control unidad" name="unidad" id="unidad">
+                                                @foreach (string Unidad in (List<string>)ViewData["unidad"])
+                                            {
+                                                    <option value="@Unidad">@Unidad</option>
+                                            }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" name="nuevo_item" required />
+                                        </td>
+                                        <td>
+                                            <input class="form-control dimensiones" type="text" name="dimensiones" />
+                                        </td>
+                                        <td>
+                                            <select name="partida" id="partida" class="partida form-control" onchange="cambiarPartida(this)" required></select>
+                                            <br />
+                                            <div class="form-group">
+                                                <div class="col-lg-3 control-label"><span>Mat.</span></div>
+                                                <div class="col-lg-9">
+                                                    <select class="form-control item" name="item" onchange="cambiarItem(this)" required></select>
+                                                </div>
+                                            </div>
+
+
+                                        </td>
+                                        <td>
+                                            <div class="pres_partida text-right"></div>
+                                        </td>
+                                        <td>
+                                            <div class="pres_item text-right"></div>
+                                        </td>
+                                        <td>
+                                            <button class="boton_eliminarItem btn btn-default">Eliminar</button>
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 col-md-offset-10">
+                                <button type="button" class="btn btn-success btn-block boton_agregar_item">Agregar Otro Item</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br />
+                        <div class="col-sm-3 col-sm-offset-9">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block" id="boton" onclick="return validarFormulario()">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#numero_folio").change(function () {
+
+                var numeroFolio = $("#numero_folio").val();
+                $.ajax({
+                    url: "/SolicitudMateriales/existeNumeroFolio",
+                    data: { "numeroFolio": numeroFolio },
+
+                    success: function (retorno) {                        
+                        
+                        if (retorno == "False") {
+                            
+                            $("#divNumeroFolio").removeClass(" has-error");
+                            $("#divNumeroFolio").addClass(" has-feedback");
+                            $("#divNumeroFolio").addClass(" has-success");
+                            $("#spanInputNumeroFolio").addClass("glyphicon-ok");
+                            $("#spanInputNumeroFolio").removeClass("glyphicon-remove");
+                            $("#mensajeErrorNumeroFolio").addClass("hidden");
+                            $("#boton").removeAttr("disabled");
+                        } else {
+                            
+                            $("#divNumeroFolio").addClass(" has-error");
+                            $("#divNumeroFolio").addClass(" has-feedback");
+                            $("#divNumeroFolio").removeClass(" has-success");
+                            $("#spanInputNumeroFolio").addClass("glyphicon-remove");
+                            $("#spanInputNumeroFolio").removeClass("glyphicon-ok");
+                            $("#mensajeErrorNumeroFolio").removeClass("hidden");
+                            $("#boton").attr("disabled", "disabled");
+                        }
+                    }
+                });
+
+                
+            });
+            
+
+            $(".boton_agregar_item").click(function () {
+
+                var $tableBody = $('#tabla_pedidos').find("tbody");
+                $trLast = $tableBody.find("tr:last");
+                $temp = $trLast.clone();
+                $temp.find(':input').val('').end();
+                $temp.find('.pres_partida').text('');
+                $temp.find('.pres_item').text('');
+
+                $temp.find('.item option').remove();
+                $trNew = $temp;                
+                $trLast.after($trNew);
+                return false;
+            });
+            $(document).on("click", ".boton_eliminarItem", function () {
+                var cantidadItems = $('.item').length;
+                var element = this;
+                if (cantidadItems > 1) {
+                    $(element).closest('tr').remove();
+                } else {
+                    alert("No puede eliminar este item , ya que la solicitud debe por lo menos tener uno.")
+                }              
+                return false;
+            });
+        });
+
+
+        function validarFormulario() {
+            var retorno = true;
+            var select = document.getElementById("id_faenaForm");
+            var idFaena = select.value;           
+
+            var cantidadItems = $('.form-control').length;
+
+            if (idFaena == "") {
+                alert("Debe escoger una Faena");
+                return retorno = false;
+            }
+            if (cantidadItems < 3) {
+                alert("La solicitud no tiene ningun elemento");
+                return retorno = false;
+            }           
+            return retorno;
+        }
+
+        Array.prototype.contains = function (v) {
+            return this.indexOf(v) > -1;
+        }
+
+
+        function cambiarFaena(valor) {
+            var select = document.getElementById("id_faenaForm");
+            //var divPresupuesto = document.getElementById("divpresupuestopartida");
+            select.value = valor.value;
+            $.getJSON('/SolicitudMateriales/obtenerPartidasFaena', { "idfaena": valor.value },
+               function (data) {
+                   $(".partida").empty();
+                   $(".partida").append("<option>Seleccione una Partida</option>");
+                   $.each(data, function (i, item) {
+                       $(".partida").append("<option value='"
+                          + item.id_partida + "'>" + item.descripcion + "-" + item.id_partida
+                          + "</option>");
+                   });
+               });
+        }
+
+        function cambiarPartida(elemento) {
+            var id_partida = elemento.value;
+            var selectItem = $(elemento).closest('tr').find('.item');
+            var id_faena = $("#faena").val();
+            $(elemento).closest('tr').find('.pres_item').text("");
+            $.getJSON('/SolicitudMateriales/obtenerItemsPartida', { "id_faena": id_faena, "id_partida": id_partida },
+               function (data) {
+                   $(selectItem).empty();
+                   $(selectItem).append("<option></option>");
+                   $.each(data, function (i, item) {
+                       $(selectItem).append("<option value='"
+                          + item.numero + "/" + item.nombre + "'>" + item.nombre
+                          + "</option>");
+                   });
+               });
+
+            $.ajax({
+                url: "/SolicitudMateriales/obtenerPresupuestoPartida", data: { "idfaena": id_faena, "idpartida": id_partida },
+                success: function (retorno) {
+                   
+                    $(elemento).closest('tr').find('.pres_partida').text(formato_precio(retorno));
+               }
+           });
+
+        }
+
+        function cambiarItem(elemento) {
+
+
+            var res = elemento.value.split("/");
+            var idItem = res[1];
+            var id_faena = $("#faena").val();
+            var id_partida = $(elemento).closest('tr').find('.partida').val();            
+            $.ajax({
+                url: "/SolicitudMateriales/obtenerPresupuestoItem", data: { "iditem": idItem, "idpartida": id_partida, "idfaena": id_faena },
+                success: function (retorno) {
+                    $(elemento).closest('tr').find('.pres_item').text(formato_precio(retorno));
+
+                }
+            });
+
+        }
+
+        function formato_precio(n) {
+            var number = new String(n);
+            var result = "";
+            isNegative = false;
+            if (number.indexOf("-") > -1) {
+                number = number.substr(1);
+                isNegative = true;
+            }
+
+            while (number.length > 3) {
+                result = '.' + number.substr(number.length - 3) + result;
+
+                number = number.substring(0, number.length - 3);
+
+            }
+            result = number + result;
+            if (isNegative) result = '-' + result;
+
+            return '$'+result;
+        }
+
+</script>
+
+}
+
+
+
+

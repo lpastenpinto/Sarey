@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "nuevo";
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <form action="@Url.Action("Guardar","Proveedor")" role="form" method="post" enctype="multipart/form-data">
+                <h2 class="text-center">Agregar Proveedor</h2>
+                <div class="form-group">
+                    <label class="control-label">Nombre del Proveedor</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <div id="divMensaje" class="form-group">
+                            <input type="text" class="form-control" name="nombre" id="id"
+                                   maxlength="100" placeholder="" required>
+                            <span id="spanInput" class="glyphicon form-control-feedback"></span>
+                            <div id="mensaje" class="alert alert-danger hidden">
+                                <strong>Error: </strong>ya existe un proveedor con ese nombre
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Nombre de contacto</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="nombreContacto" id="nombreContacto" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Correo de contacto</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="correoContacto" id="correoContacto" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Telefono de contacto</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="telefonoContacto" id="telefonoContacto" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Dirección del Proveedor</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="dirProveedor" id="dirProveedor" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Razon Social Proveedor</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="rSocial" id="rSocial" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Rut Proveedor</label>
+                    <div id="divNombreNombre" class="form-group">
+                        <input type="text" class="form-control" name="rutProv" id="rutProv" maxlength="100" placeholder="" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-default btn-lg" href="@Url.Action("todos","Proveedor")"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Cancelar</a>
+                    <button type="submit" class="btn btn-primary btn-lg" id="btn-nuevo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+
+        $("#id").change(function () {
+            id = $("#id").val();
+            console.log("id: " + id);
+
+            $.ajax({
+                url: "verificarProveedor", data: { "valor_proveedor": id },
+
+                success: function (retorno) {
+
+                    console.log(retorno);
+
+                    if (retorno == "true") {
+                        $("#btn-nuevo").attr("disabled", "disabled");
+
+                        $("#divMensaje").addClass(" has-error");
+                        $("#divMensaje").addClass(" has-feedback");
+                        $("#divMensaje").removeClass(" has-success");
+
+                        $("#spanInput").addClass("glyphicon-remove");
+                        $("#spanInput").removeClass("glyphicon-ok");
+
+                        $("#mensaje").removeClass("hidden");
+                    }
+                    else {
+                        $("#btn-nuevo").removeAttr("disabled");
+
+                        $("#divMensaje").addClass(" has-feedback");
+                        $("#divMensaje").removeClass(" has-error");
+                        $("#divMensaje").addClass(" has-success");
+                        $("#spanInput").addClass("glyphicon-ok");
+                        $("#spanInput").removeClass("glyphicon-remove");
+
+                        $("#mensaje").addClass("hidden");
+                    }
+                }
+            });
+        });
+    </script>
+}

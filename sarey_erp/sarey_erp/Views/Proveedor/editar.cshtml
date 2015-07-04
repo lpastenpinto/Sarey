@@ -1,0 +1,120 @@
+﻿@model sarey_erp.Models.proveedores
+@{
+    ViewBag.Title = "Editar Proveedor";
+}
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+        <form action="@Url.Action("todos", "Proveedor")" role="form" method="post" enctype="multipart/form-data">
+            <h2 class="text-center">Editar Proveedor</h2>
+            <div class="form-group">
+                <input type="text" name="nombreAnterior" id="nombreAnterior" placeholder="Nombre del Proveedor" value="@Model.nombre_proveedor" required hidden>
+                <div class="form-group">
+                    <div id="divNombreNombre" class="form-group">
+                        <label class="control-label">Nombre del Proveedor:</label>
+                        <input type="text" class="form-control" name="nombre" id="id" value="@Model.nombre_proveedor" placeholder="Nombre del Proveedor" required>
+                        <span id="spanInputNombre" class="glyphicon form-control-feedback"></span>
+                        <div id="mensajeErrorNombre" class="alert alert-danger hidden">
+                            <strong>Error: </strong> ya existe un proveedor con este nombre
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Nombre de contacto</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="nombreContacto" id="nombreContacto" maxlength="100" value="@Model.nombre_contacto" placeholder="Nombre del Proveedor" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Correo de contacto</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="correoContacto" id="correoContacto" maxlength="100" value="@Model.correo_contacto" placeholder="Correo" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Telefono de contacto</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="telefonoContacto" id="telefonoContacto" maxlength="100" value="@Model.telefono" placeholder="telefono" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Dirección del Proveedor</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="dirProveedor" id="dirProveedor" maxlength="100" value="@Model.direccion" placeholder="dirección" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Razon Social Proveedor</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="rSocial" id="rSocial" maxlength="100" value="@Model.razonsocial" placeholder="razon social" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Rut Proveedor</label>
+                <div id="divNombreNombre" class="form-group">
+                    <input type="text" class="form-control" name="rutProv" id="rutProv" maxlength="100" value="@Model.rut" placeholder="rut" required>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <a type="button" class="btn btn-default btn-lg" href="@Url.Action("todos","Proveedor")"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Cancelar</a>
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-editar"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Guardar</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+
+        $("#id").change(function () {
+            verificarCampos();
+        });
+
+        function verificarCampos() {
+            var habilitarBoton = true;
+
+            var nombreProv = $("#id").val();
+
+            $.ajax({
+                url: "/Proveedor/verificarProveedor",
+                data: { "valor_proveedor": nombreProv },
+
+                success: function (retorno) {
+
+                    console.log("¿Existe usuario? " + retorno);
+
+                    if (retorno == "false" || $("#nombreAnterior").val() == nombreProv) {
+                        $("#divNombreNombre").removeClass(" has-error");
+                        $("#divNombreNombre").addClass(" has-feedback");
+                        $("#divNombreNombre").addClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-ok");
+                        $("#spanInputNombre").removeClass("glyphicon-remove");
+                        $("#mensajeErrorNombre").addClass("hidden");
+                    }
+                    else {
+
+                        habilitarBoton = false;
+
+                        $("#divNombreNombre").addClass(" has-error");
+                        $("#divNombreNombre").addClass(" has-feedback");
+                        $("#divNombreNombre").removeClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-remove");
+                        $("#spanInputNombre").removeClass("glyphicon-ok");
+                        $("#mensajeErrorNombre").removeClass("hidden");
+                    }
+
+                    if (habilitarBoton) {
+                        console.log("habilitando botón");
+                        $("#btn-editar").removeAttr("disabled");
+                    }
+                    else {
+                        console.log("deshabilitando botón");
+                        $("#btn-editar").attr("disabled", "disabled");
+                    }
+                }
+            });
+        }
+    </script>
+}

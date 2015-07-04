@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "nuevo";
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="content">
+            <div class="col-md-12">
+                <form action="@Url.Action("guardarDia", "Feriado")" role="form" method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Día Feriado</h2>
+                    <br />
+                   
+                    <div class="form-group">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Festividad</th>
+                                    <th>Tipo de Feriado</th>
+                                    <th>Irrenunciable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                    <input class="form-control" name="datetimepicker1" id="datetimepicker1"
+                                               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                               type="text" required>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="festivo" id="festivo" maxlength="100" required></td>
+                                    <td>
+                                        <select class="form-control" name="tipo_feriado" id="tipo_feriado" required>
+                                            <option value="Civil">Civil</option>
+                                            <option value="Religioso">Religioso</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="irrenunciable" id="irrenunciable" required>
+                                            <option value="Si">Si</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </td>
+                            </tbody>
+                        </table>
+                       
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-default btn-lg" href="@Url.Action("todos","Feriado")"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Cancelar</a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="btn-nuevo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+<script type="text/javascript">
+
+    $("#datetimepicker1").datetimepicker({
+        viewMode: 'days',
+        format: 'DD/MM/YYYY'
+    });
+
+</script>
+}

@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "nuevo rango de fechas para licencias";
+}
+
+<div class="content-wrapper" style="min-height:900px !important">
+    <br />
+    <div class="content">
+        <div class="page-header text-center">
+            <h2>Nuevo Rango de Fechas para Licencias <small>@ViewBag.NombreTrabajador</small></h2>
+        </div>
+        <div class="col-sm-10 col-sm-offset-1">
+            <form action="@Url.Action("guardarLicencias","Trabajador")" method="post">
+                <div class="row">
+                    <h4>Datos del Trabajador:</h4>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="control-label">Rut:</label>
+                        @{
+                            string RUT = ViewBag.Rut;
+                            char[] caracteres = RUT.ToCharArray();
+                            RUT = "";
+                            for (int i = caracteres.Length - 1; i >= 0; i--)
+                            {
+                                if (i == caracteres.Length - 1)
+                                {
+                                    RUT = "-" + caracteres[i] + RUT;
+                                }
+                                else if (i == caracteres.Length - 4 || i == caracteres.Length - 7)
+                                {
+                                    RUT = "." + caracteres[i] + RUT;
+                                }
+                                else
+                                {
+                                    RUT = caracteres[i] + RUT;
+                                }
+                            }
+                        }
+                        <input class="form-control" type="text" name="rut" id="rut" value="@RUT" readonly />
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="control-label">Nombre:</label>
+                        <input class="form-control" type="text" name="nombre" value="@ViewBag.NombreTrabajador" readonly />
+                    </div>
+                </div>
+                <br class="hidden-xs" />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="divRut" class="form-group">
+                            <label class="control-label">Fecha de Inicio:</label>
+                            <input class="form-control" type="text" name="fechaInicio" id="fechaInicio"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]" required />
+                            <span id="spanInputRut" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorRut" class="alert alert-danger hidden">
+                                <strong>Error: </strong> Ya existe una licencia registrada en esta fecha para el trabajador
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="divRut" class="form-group">
+                            <label class="control-label">Fecha de Término:</label>
+                            <input class="form-control" type="text" name="fechaTermino" id="fechaTermino"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]" required />
+                            <span id="spanInputRut" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorRut" class="alert alert-danger hidden">
+                                <strong>Error: </strong> Ya existe una licencia registrada en esta fecha para el trabajador
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <label class="control-label">Descripción:</label>
+                        <textarea class="form-control" maxlength="1000" name="descripcion" id="descripcion" placeholder="Ingrese una descripción para la licencia a registrar" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("licencias", "Trabajador", new { rut= @ViewBag.rut })" class="btn btn-lg btn-default">Cancelar</a>
+                    <button type="submit" id="boton" class="btn btn-lg btn-primary">Guardar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $("#fechaInicio").datetimepicker({
+            viewMode: 'days',
+            format: 'DD/MM/YYYY'
+        });
+
+        $("#fechaTermino").datetimepicker({
+            viewMode: 'days',
+            format: 'DD/MM/YYYY'
+        });
+    </script>
+}

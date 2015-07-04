@@ -1,0 +1,246 @@
+﻿@model sarey_erp.Models.hojaRutaFactura
+
+@{
+    ViewBag.Title = "nueva";
+}
+
+<div class="content-wrapper" style="min-height:1200px !important">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <div class="header">
+                <h1>Nueva Hoja de Ruta <small>Factura de Proveedores</small></h1>
+            </div>
+            <div class="clearfix"></div>
+            <hr style="border-color:#000 !important" />
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <h3>Nuevo Usuario:</h3>
+                    <br />
+                    <form role="form" method="post" action="@Url.Action("agregarHojaRuta", "HojaRuta")" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <div id="divNombreNombre" class="form-group">
+                                <label class="control-label">Número de Orden de Compra:</label>
+                                <input type="text" class="form-control" name="numeroOrdenCompra" id="numeroOrdenCompra"
+                                       value="@Model.numeroOrdenCompra" required readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Proveedor:</label>
+                            <input name="proveedor" id="proveedor" value="@ViewBag.proveedor" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Rut:</label>
+                            <input class="form-control" name="rut" id="rut" type="text" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <div id="divRut" class="form-group">
+                                <label class="control-label">N° de factura:</label>
+                                <input class="form-control" placeholder="4320" name="numeroFactura" id="numeroFactura" type="text" required>
+                                <span id="spanInputRut" class="glyphicon form-control-feedback"></span>
+                                <div id="mensajeErrorRut" class="alert alert-danger hidden">
+                                    <strong>Error: </strong> Ya existe una factura con este número para este proveedor
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Fecha de recepción de factura:</label>
+                            <input class="form-control" name="fechaEntrega" id="fechaEntrega"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                   type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Nombre de quien entrega la factura:</label>
+                            <input class="form-control" placeholder="Nombre Apellido" name="nombreQuienEntrega" type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Forma de Pago:</label>
+                            <select name="formaPago" id="formaPago" class="form-control">
+                                <option value="Seleccione una opción">Seleccione una opción</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="cajaChica">Caja Chica</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Centros de Costos:</label>
+                            @{
+                                string centroCosto = "";
+                            }
+                            @foreach (string cc in (List<string>)@ViewBag.centroCosto)
+                            {
+                                centroCosto += cc + "-";
+                            }
+                            @{
+                                centroCosto = centroCosto.TrimEnd('-');
+                                centroCosto = centroCosto.Replace("-", " - ");
+                            }
+                            <input name="centroCostos" id="centroCostos" value="@centroCosto" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Detalle de productos:</label>
+                            <div class="table-responsive">
+                                <table class="table text-center">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Unidad</th>
+                                        <th>Cantidad por Llegar</th>
+                                        <th>Cantidad Entregada</th>
+                                        <th>Registrar en Inventario</th>
+                                    </tr>
+                                    @{
+                                        List<string> lista = (List<string>)ViewBag.productos;
+                                    }
+                                    @foreach (string cadena in lista)
+                                    {
+                                        <tr>
+                                            <td>@cadena.Split(';')[0]</td>
+                                            <td>@cadena.Split(';')[1]</td>
+                                            <td>@cadena.Split(';')[2]</td>
+                                            <td>@cadena.Split(';')[3]</td>
+                                            <td><input class="form-control" type="number" name="cantidadEntregada" id="cantidadEntregada" required /></td>
+                                            <td><input type="checkbox" name="registrarInventario" id="registrarInventario" /><input class="hidden" name="guardarInventario" id="guardarInventario" value="false" readonly></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <!-- Change this to a button or input when using this as a form -->
+                        <div class="modal-footer">
+                            <a href="@Url.Action("Index","HojaRuta")" class="btn btn-lg btn-default">Cancelar</a>
+                            <button type="submit" id="boton" class="btn btn-lg btn-primary" disabled>Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+    @section scripts{
+        <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $.ajax({
+            url: "/HojaRuta/obtenerDatosProveedor",
+            data: { "nombre": $("#proveedor").val() },
+
+            success: function (retorno) {
+
+                console.log("Rut de Proveedor: " + retorno);
+
+                $("#rut").val(retorno)
+            }
+        });
+    });
+
+    $("#formaPago").change(function () {
+        verificarCampos();
+    });
+
+    $("#centroCostos").change(function () {
+        verificarCampos();
+    });
+
+    $("#numeroFactura").change(function () {
+        verificarCampos();
+    });    
+
+    $('#numeroFactura').bind('keypress', function (event) {
+        var regex = new RegExp("^[0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    $("input[type=checkbox]").on("click", function () {
+
+        $('tr').each(function () {
+            console.log("on");
+            if ($(this).find("#registrarInventario").is(":checked")) {
+                $(this).find("#guardarInventario").val("true");
+            }
+            else
+            {
+                $(this).find("#guardarInventario").val("false");
+            }
+        });
+    });
+
+    function verificarCampos() {
+        var habilitarBoton = true;
+
+        var formaPago = $("#formaPago").val();
+        if (formaPago == "Seleccione una opción") {
+            habilitarBoton = false;
+        }
+
+        var nOrdenCompra = $("#numeroOrdenCompra").val();
+        if (nOrdenCompra == "Seleccione una opción") {
+            habilitarBoton = false;
+        }
+
+        var centroCostos = $("#centroCostos").val();
+        if (centroCostos == "Seleccione una opción") {
+            habilitarBoton = false;
+        }
+
+        $.ajax({
+            url: "/HojaRuta/existeFacturaProveedor",
+            data: {
+                "factura": $("#numeroFactura").val(),
+                "proveedor" : $("#proveedor").val()
+            },
+
+            success: function (retorno) {
+
+                console.log("Existe factura proveedor: " + retorno);
+
+                if (retorno != "false" || $("#numeroFactura").val()=="") {
+                    habilitarBoton = false;
+                    $("#divRut").addClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").removeClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-remove");
+                    $("#spanInputRut").removeClass("glyphicon-ok");
+                    if ($("#numeroFactura").val() != "") $("#mensajeErrorRut").removeClass("hidden");
+                }
+                else {
+                    $("#divRut").removeClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").addClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-ok");
+                    $("#spanInputRut").removeClass("glyphicon-remove");
+                    $("#mensajeErrorRut").addClass("hidden");
+                }
+
+                if (habilitarBoton) {
+                    $("#boton").removeAttr("disabled");
+                }
+                else {
+                    $("#boton").attr("disabled", "disabled");
+                }
+            }
+        });
+    }
+
+    $(document).on("keypress", 'form', function (e) {
+        var code = e.keyCode || e.which;
+        if (code == 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+
+    $("#fechaEntrega").datetimepicker({
+        viewMode: 'days',
+        format: 'DD/MM/YYYY'
+    });
+        </script>
+    }

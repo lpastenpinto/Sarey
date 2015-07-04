@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "nuevoItem";
+}
+
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            @{                
+                if (@ViewBag.verifica_creacion == true )
+                {
+                    <p>Item Guardado Correctamente</p>
+                }
+                else if (@ViewBag.verifica_creacion == false)
+                { 
+                    <p>No puede guardar un Item que ya existe</p>
+                }
+                
+            }
+            <h4 class="text-center">Nuevo Item</h4>
+            <form action="@Url.Action("crearItem", "Item")" role="form" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="control-label">Nombre</label>
+                    <input class="form-control" name="nombre" type="text" required />
+                </div>
+                <div class="form-group">
+                    <label>Descripcion</label>
+                    <input type="text" class="form-control" name="descripcion" required />
+                    
+                </div>   
+                <div class="form-group">
+                    <label>Unidad</label>
+                    <input type="text" class="form-control" name="unidad" required />
+                    
+                </div>
+                <div class="form-group">
+                    <label>Dimensiones</label>
+                    <input type="text" class="form-control" name="dimensiones"/>
+                    
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+</form>
+        </div>
+    </div>
+</div>
+

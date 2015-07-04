@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "datosPersonales";
+    sarey_erp.Models.trabajador Trabajador = new sarey_erp.Models.trabajador();// ViewData["solicitud"];
+    Trabajador = (sarey_erp.Models.trabajador)ViewData["trabajador"];
+    sarey_erp.Models.formatearString formatear = new sarey_erp.Models.formatearString();
+
+    sarey_erp.Models.liquidacion Liquidacion= new sarey_erp.Models.liquidacion();// ViewData["solicitud"];
+    Liquidacion = (sarey_erp.Models.liquidacion)ViewData["liquidacion"];        
+}
+
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h3 class="text-center">Liquidacion de @Trabajador.nombres @Trabajador.apellidos</h3>
+
+
+            <div class="col-sm-12">
+                <table class="table table-bordered table-striped table-hover" style="border: 1px solid black !important">
+                    <tbody>
+                        @{
+                            <tr>
+                                <td style="border: 1px solid black !important">Rut</td>
+                                <td style="border: 1px solid black !important" class="text-right">@Trabajador.rut</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Obra</td>
+                                <td style="border: 1px solid black !important" class="text-right">@Liquidacion.obra</td>
+                            </tr>
+                             <tr>
+                                <td style="border: 1px solid black !important"><strong>Remuneraciones Imponibles</strong></td>
+                                <td style="border: 1px solid black !important" class="text-right"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Sueldo Base</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.sueldo_base)</td>
+                            </tr>
+                             <tr>
+                                 <td style="border: 1px solid black !important">Bono Produccion</td>
+                                 <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.bono_produccion)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Bono Responsabilidad</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.bono_responsabilidad)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Gratificacion</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.gratificacion)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important"><strong>Total Imponible</strong></td>
+                                <td style="border: 1px solid black !important" class="text-right"><strong>$@formatear.valoresPesos(Liquidacion.sueldo_imponible)</strong></td>
+                            </tr> 
+                             <tr>
+                                <td style="border: 1px solid black !important"><strong>Remuneracion No Imponibles</strong></td>
+                                <td style="border: 1px solid black !important" class="text-right"></td>
+                            </tr>                          
+                            <tr>
+                                <td style="border: 1px solid black !important">Asignacion Familiar</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.asignacion_familiar)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Bono Colacion</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.bono_colacion)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Bono Movilizacion</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.bono_movilizacion)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Viatico</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.viatico)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important" >Desgaste de Herramientas</td>
+                                <td style="border: 1px solid black !important" class="text-right">$@formatear.valoresPesos(Liquidacion.desgaste_herramientas)</td>
+                            </tr>
+                             <tr>
+                                <td style="border: 1px solid black !important"><strong>Suelo Bruto</strong></td>
+                                <td style="border: 1px solid black !important" class="text-right" ><strong>$@formatear.valoresPesos(Liquidacion.sueldo_bruto)</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important"><strong>Descuentos</strong></td>
+                                <td style="border: 1px solid black !important"></td>
+                            </tr>
+                            
+                              if (@Liquidacion.dias_licencia > 0)
+                              {
+                                <text>
+                                 <tr>
+                                    <td style="border: 1px solid black !important" >@Liquidacion.dias_licencia Dias de Licencia</td>
+                                    <td style="border: 1px solid black !important" class="text-right">-$@Liquidacion.descuento_licencia</td>
+                                 </tr>
+                                 </text>
+                              }
+                            if (@Liquidacion.cantidad_dias_notrabajados > 0)
+                              {
+                                <text>
+                                    <tr>
+                                        <td style="border: 1px solid black !important">@Liquidacion.cantidad_dias_notrabajados Dias Sin Trabajar </td>
+                                        <td style="border: 1px solid black !important" class="text-right">-$@Liquidacion.descuento_noTrabajo</td>
+                                    </tr>
+                                </text>
+                              }
+
+
+
+                            <tr>
+                                <td style="border: 1px solid black !important">@Trabajador.salud</td>
+                                <td style="border: 1px solid black !important" class="text-right">-$@formatear.valoresPesos(Liquidacion.salud)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">APV</td>
+                                <td style="border: 1px solid black !important" class="text-right">-$@formatear.valoresPesos(Liquidacion.apv)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">@Trabajador.afp</td>
+                                <td style="border: 1px solid black !important" class="text-right">-$@formatear.valoresPesos(Liquidacion.afp)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important">Seguro de Cesantia</td>
+                                <td style="border: 1px solid black !important" class="text-right">-$@formatear.valoresPesos(Liquidacion.afc)</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black !important"><strong>Sueldo Liquido </strong></td>
+                                <td style="border: 1px solid black !important" class="text-right"><strong>$@formatear.valoresPesos(Liquidacion.sueldo_liquido)</strong></td>
+                            </tr>
+
+                            }
+</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

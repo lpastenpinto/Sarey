@@ -1,0 +1,56 @@
+﻿@model List<sarey_erp.Models.liquidacion>
+@{
+    ViewBag.Title = "Liquidaciones";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="header text-center">
+        <h2>Liquidaciones de sueldo @ViewBag.mes / @ViewBag.anio</h2>
+    </div>
+    <div class="content">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    @grid.GetHtml(
+                columns: grid.Columns(
+                grid.Column("rut",
+                header: string.Format("Rut {0}", grid.SortColumn == "rut" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+
+                grid.Column(
+                    "obra",
+                     header: string.Format("Obras {0}", grid.SortColumn == "obra" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+                grid.Column(
+                    "sueldo_base",
+                     header: string.Format("Sueldo Base {0}", grid.SortColumn == "sueldo_base" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+               
+                 grid.Column(
+                    "sueldo_imponible",
+                     header: string.Format("Sueldo Imponible {0}", grid.SortColumn == "sueldo_imponible" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+                grid.Column("",
+                    header: "Ver Liquidacion",
+                    format: @<text>
+                        <a href="@Url.Action("verLiquidacionTrabajador", "Liquidaciones", new { rutTrabajador = @item.rut , mes=@ViewBag.mes, anio=@ViewBag.anio })" title="Ver"><i class='glyphicon glyphicon-edit text-primary'></i></a>
+                    </text>)
+
+), tableStyle: "table table-hover", footerStyle: "pagination")
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

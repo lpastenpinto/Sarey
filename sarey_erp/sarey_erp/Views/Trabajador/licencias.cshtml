@@ -1,0 +1,35 @@
+﻿@model List<sarey_erp.Models.licenciasTrabajadores>
+@{
+    ViewBag.Title = "Licencias de trabajador";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Licencias del Trabajador <small>@ViewBag.Rut - @ViewBag.NombreTrabajador</small></h2>
+    </div>
+    <div class="content">
+        <div class="table-responsive">
+    @grid.GetHtml(
+        columns: grid.Columns(
+            grid.Column("fecha",
+            header: string.Format("Fecha {0}", grid.SortColumn == "numeroOrdenCompra" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+            style: "text-muted",
+            format: @<text>
+                @item.fecha.ToShortDateString()
+            </text>
+                ),
+
+            grid.Column("descripcion",
+            header: string.Format("Descripción {0}", grid.SortColumn == "numeroFactura" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""))
+
+    ), tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("nuevaLicencia", "Trabajador", new { rut = @ViewBag.Rut })" class="btn btn-primary">Agregar Nueva</a>
+            <a href="@Url.Action("nuevasLicencias", "Trabajador", new { rut = @ViewBag.Rut })" class="btn btn-primary">Agregar Varias según Rango de Fechas</a>
+            <a href="@Url.Action("verTrabajador", "Trabajador", new { rut = @ViewBag.Rut })" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>

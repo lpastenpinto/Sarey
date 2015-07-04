@@ -1,0 +1,174 @@
+﻿@model List<sarey_erp.Models.trabajador>
+@{
+    ViewBag.Title = "todos";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+    DateTime today = DateTime.Today;
+    int mes = today.Month;
+    int anio = today.Year;
+    int anio_anterior=0;
+    
+    if(mes==1){
+        anio_anterior = anio - 1;
+    }
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="header text-center">
+        <h2>Lista Trabajadores</h2>
+    </div>
+    <div class="content">
+      
+        @if (ViewBag.verificador != null && ViewBag.verificador.Equals("si"))
+        {
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-hidden="true">
+                    &times;
+                </button>
+                El trabajador ha sido agregado con éxito
+            </div>
+        }
+        @if (ViewBag.verificador != null && ViewBag.verificador.Equals("no"))
+        {
+            <div class="alert alert-error alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-hidden="true">
+                    &times;
+                </button>
+                El trabajador no pudo ser ingresado
+            </div>
+        }
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="input-group" id="divBuscador">
+                   <form class="form-horizontal" role="form"  enctype="multipart/form-data">
+
+                        <input type="text" class="form-control" id="inputBuscador" placeholder="ingrese rut sin punto ni guion">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="boton_buscar" onclick="return verificarTrabajador();">Buscar</button>
+                        </span>
+                        <div id="mensajeErrorTrabajador" class="alert alert-danger hidden">
+                            <strong>Error: </strong> Trabajador No existe
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br />
+       <div class="table-responsive">
+                        @grid.GetHtml(
+                columns: grid.Columns(
+                grid.Column("rut",
+                header: string.Format("Rut {0}", grid.SortColumn == "rut" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+
+                grid.Column(
+                    "apellidos",
+                     header: string.Format("Apellidos {0}", grid.SortColumn == "apellidos" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+                grid.Column(
+                    "nombres",
+                     header: string.Format("Nombres {0}", grid.SortColumn == "nombres" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+                grid.Column(
+                    "obra",
+                     header: string.Format("Obra {0}", grid.SortColumn == "obra" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+                 grid.Column(
+                    "cargo",
+                     header: string.Format("Cargo {0}", grid.SortColumn == "cargo" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+
+                grid.Column("",
+                    header: "Ver",
+                    format: @<text>
+                        <a href="@Url.Action("verTrabajador", "Trabajador", new { rut = @item.rut })" title="Ver"><i class='glyphicon glyphicon-edit text-primary'></i></a>
+                    </text>),
+                grid.Column("",
+                    header: "Finiquitar",
+                    format: @<text>
+                        <a href="@Url.Action("Index", "finiquitos", new { rut = @item.rut })" title="Ver"><i class='glyphicon glyphicon-remove-circle'></i></a>
+                    </text>)
+
+), tableStyle: "table table-hover", footerStyle: "pagination")
+
+
+
+
+
+
+                    </div>
+                    @if (Session["rol"].Equals("admin"))
+                    {
+                        <div class="modal-footer">
+                            <a href="@Url.Action("nuevo", "Trabajador")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign text-success"></i>&nbsp;Nuevo</a>
+                        </div>
+                    }
+       
+            </div>
+            
+        </div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#inputBuscador').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[k]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+          
+
+        });
+
+        function verificarTrabajador() {            
+            var rut = $("#inputBuscador").val();
+
+            var ver = 0;
+
+
+            $.ajax({
+                url: "/Trabajador/verificarExisteTrabajador",
+                data: { "rut": rut },
+
+                success: function (retorno) {
+                    
+                    if (retorno == 'false') {
+                        verif = false;
+
+                        $("#divBuscador").addClass(" has-error");
+                        $("#divBuscador").addClass(" has-feedback");
+                        $("#divBuscador").removeClass(" has-success");
+                        $("#mensajeErrorTrabajador").removeClass("hidden");
+                        ver = 1;
+                        return verif;
+
+                    } else {
+                        $("#divBuscador").removeClass(" has-error");
+                        $("#divBuscador").addClass(" has-feedback");
+                        $("#divBuscador").addClass(" has-success");
+                        $("#mensajeErrorTrabajador").addClass("hidden");
+                        verif = true;
+                        ver = 1;
+                        
+                        var ruta="@Url.Action("verTrabajador", "Trabajador", new { rut="RUT"})";
+                        ruta=ruta.replace("RUT",rut);
+                       
+                        window.location=ruta;
+                    }
+                }
+            });
+
+
+        }
+    </script>
+}        

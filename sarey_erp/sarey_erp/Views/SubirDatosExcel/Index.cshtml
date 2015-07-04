@@ -1,0 +1,272 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            @{
+                if (@ViewBag.verificaCentroCosto == true)
+                {
+                    <p>Centro de Costo ya existe. Ingrese uno nuevo</p>
+                }
+                else
+                    if (@ViewBag.Verifica == true)
+                    {
+                        <p>Datos importados correctamente</p>
+                    }
+                    else if (@ViewBag.Verifica == false)
+                    {
+
+                       
+                        string source = ViewBag.Error;
+                        string[] stringSeparators = new string[] { "en System" ,"en sarey_erp"};
+                        string[] result;
+                        result = source.Split(stringSeparators, StringSplitOptions.None);
+                        ViewBag.Error = result[0];
+
+                        
+                            <div class="alert alert-danger">
+                                <strong>Error: </strong> @ViewBag.Error
+                            </div>
+                            
+                         
+                    }
+
+            }
+            <h3 class="text-center">Importar Datos Excel</h3>
+            <br />
+
+            <div class="row">
+                <div class="col-md-12">
+                    Formato :
+                </div>
+                <div class="col-md-12">
+                    <ul>
+                        <li>
+                            Tanto en la hoja de "Presupuesto" y "Precio Unitario", solo debe existir una fila de espacio entre los diferentes Items. (Incluyendo el "Resumen Global" en la hoja de Precio Unitario)
+                        </li>
+                        <li>
+                            Eliminar Cabeceras en Ambas hojas.
+                        </li>
+                        <li>
+                            Se empieza todo desde la linea 1, por lo que no deben una fila vacia en la linea 1 de ninguna de las dos hojas.
+                        </li>
+                        <li>
+                            <a href="@Url.Action("descargarEjemplo","SubirDatosExcel")">Descargar Archivo de Ejemplo</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="@Url.Action("importarExcel","SubirDatosExcel")" role="form" method="post" enctype="multipart/form-data" onsubmit="return validarNombreArchivo();">
+                        <div id="divNombre" class="form-group">
+                            <label class="control-label">Nombre Faena</label>
+                            <input class="form-control" type="text" id="nombreFaena" name="nombreFaena" required />
+                            <span id="spanInputNombre" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorNombre" class="alert alert-danger hidden">
+                                <strong>Error: </strong> ya existe una Faena con este nombre
+                            </div>
+                        </div>
+                        <div id="divCentroCosto" class="form-group">
+                            <label class="control-label">Centro de Costos</label>
+                            <input class="form-control" type="number" id="centroCosto" name="centroCosto" min="1" required />
+                            <span id="spanInputCentroCosto" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorCentroCosto" class="alert alert-danger hidden">
+                                <strong>Error: </strong> Centro de Costo ya existe. Ingrese uno nuevo
+                            </div>
+                        </div>
+                        <div id="divArchivo" class="form-group">
+                            <label class="control-label">Archivo</label>
+                            <input class="form-control" type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+                            <span id="spanInputArchivo" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorArchivo" class="alert alert-danger hidden">
+                                <strong>Error: </strong>El nombre el archivo tiene espacios. Quite los espacios antes de importar archivo Excel.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="@Url.Action("Index","Faenas")" class="btn btn-default btn-lg">Cancelar</a>
+                            <button id="boton" type="submit" class="btn btn-primary btn-lg">Subir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $("#nombreFaena").change(function () {
+            verificarCampos();
+        });
+        $("#centroCosto").change(function () {
+            verificarCampos();
+        });
+        $("#file").change(function () {
+            verificarCampos();
+        });
+
+
+        function verificarCampos() {
+
+            var habilitarBoton = true;
+
+            var nombreFaena = $("#nombreFaena").val();
+            $.ajax({
+                url: "/SubirDatosExcel/existeFaena",
+                data: { "nombreFaena": nombreFaena },
+
+                success: function (retorno) {
+
+                    console.log("¿Existe usuario? " + retorno);
+
+                    if (retorno == "false") {
+                        $("#divNombre").removeClass(" has-error");
+                        $("#divNombre").addClass(" has-feedback");
+                        $("#divNombre").addClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-ok");
+                        $("#spanInputNombre").removeClass("glyphicon-remove");
+                        $("#mensajeErrorNombre").addClass("hidden");
+                    }
+                    else {
+                        habilitarBoton = false;
+                        $("#divNombre").addClass(" has-error");
+                        $("#divNombre").addClass(" has-feedback");
+                        $("#divNombre").removeClass(" has-success");
+                        $("#spanInputNombre").addClass("glyphicon-remove");
+                        $("#spanInputNombre").removeClass("glyphicon-ok");
+                        $("#mensajeErrorNombre").removeClass("hidden");
+                    }
+
+
+                    if (habilitarBoton) {
+                        $("#boton").removeAttr("disabled");
+                    }
+                    else {
+                        $("#boton").attr("disabled", "disabled");
+                    }
+                }
+            });
+
+            var centroCosto = $("#centroCosto").val();
+
+
+            if (centroCosto == "") { habilitarBoton = false; }
+            else {
+                $.ajax({
+                    url: "/SubirDatosExcel/existeCentroCosto",
+                    data: { "centroCosto": centroCosto },
+
+                    success: function (retorno) {
+
+                        console.log("Retorno centro costo: " + retorno);
+
+                        if (retorno == "false") {
+                            $("#divCentroCosto").removeClass(" has-error");
+                            $("#divCentroCosto").addClass(" has-feedback");
+                            $("#divCentroCosto").addClass(" has-success");
+                            $("#spanInputCentroCosto").addClass("glyphicon-ok");
+                            $("#spanInputCentroCosto").removeClass("glyphicon-remove");
+                            $("#mensajeErrorCentroCosto").addClass("hidden");
+
+                        }
+                        else {
+                            habilitarBoton = false;
+                            $("#divCentroCosto").addClass(" has-error");
+                            $("#divCentroCosto").addClass(" has-feedback");
+                            $("#divCentroCosto").removeClass(" has-success");
+                            $("#spanInputCentroCosto").addClass("glyphicon-remove");
+                            $("#spanInputCentroCosto").removeClass("glyphicon-ok");
+                            $("#mensajeErrorCentroCosto").removeClass("hidden");
+                        }
+
+
+                        if (habilitarBoton) {
+                            $("#boton").removeAttr("disabled");
+                        }
+                        else {
+                            $("#boton").attr("disabled", "disabled");
+                        }
+                    }
+                });
+
+                var nombreVideo = $("#file").val();//document.getElementById("file").value;
+                if (!nombreVideo == "") {
+                    var espacios = false;
+                    var cont = 0;
+
+                    while (!espacios && (cont < nombreVideo.length)) {
+
+                        if (nombreVideo.charAt(cont) == " ") {
+                            espacios = true;
+                        }
+
+                        cont++;
+                    }
+
+                    if (espacios) {
+                        habilitarBoton = false;
+                        $("#divArchivo").addClass(" has-error");
+                        $("#divArchivo").addClass(" has-feedback");
+                        $("#divArchivo").removeClass(" has-success");
+                        $("#spanInputArchivo").addClass("glyphicon-remove");
+                        $("#spanInputArchivo").removeClass("glyphicon-ok");
+                        $("#mensajeErrorArchivo").removeClass("hidden");
+                        $("#boton").attr("disabled", "disabled");
+                    }
+                    else {
+                        $("#divArchivo").removeClass(" has-error");
+                        $("#divArchivo").addClass(" has-feedback");
+                        $("#divArchivo").addClass(" has-success");
+                        $("#spanInputArchivo").addClass("glyphicon-ok");
+                        $("#spanInputArchivo").removeClass("glyphicon-remove");
+                        $("#mensajeErrorArchivo").addClass("hidden");
+
+                    }
+
+                }
+
+                if (habilitarBoton) {
+                    $("#boton").removeAttr("disabled");
+                }
+                else
+                {
+                    $("#boton").attr("disabled", "disabled");
+                }
+
+            }
+        }
+
+
+        function validarNombreArchivo() {
+            var nombreVideo = document.getElementById("file").value;
+
+            var espacios = false;
+            var cont = 0;
+
+            while (!espacios && (cont < nombreVideo.length)) {
+
+                if (nombreVideo.charAt(cont) == " ") {
+                    espacios = true;
+                }
+
+                cont++;
+            }
+
+            if (espacios) {
+                alert("El nombre del video tiene espacios.Eliminelos");
+                return false;
+            }
+        }
+
+        function limpiarError(Error) {
+            
+            var error_completo = Error.split('en System');
+            return error_completo[0];
+        }
+
+    </script>
+}

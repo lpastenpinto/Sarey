@@ -1,0 +1,177 @@
+﻿@model sarey_erp.Models.hojaRutaFactura
+@{
+    ViewBag.Title = "Hoja de Ruta";
+}
+
+<div class="content-wrapper" style="min-height:1000px !important">
+    <div class="content">
+        <div class="col-sm-10 col-sm-offset-1">
+            <div class="header">
+                <h1>Hoja de Ruta <small>Factura de Proveedores</small></h1>
+            </div>
+            <div class="clearfix"></div>
+            <hr style="border-color:#000 !important" />
+            <div class="col-sm-12">
+                <h3>Datos Generales:</h3>
+                <strong>Proveedor:</strong> @Model.nombreProvedor
+                <br />
+                <strong>Rut:</strong> @Model.rutProveedor
+                <br />
+                <strong>Factura N°:</strong> @Model.numeroFactura
+                <br />
+                <strong>Fecha  de recepción de factura:</strong> @Model.fechaRecepcionFactura
+                <br />
+                <strong>Nombre de quien entrega factura:</strong> @Model.nombreQuienEntrega
+                <br />
+                <strong>Forma de Pago:</strong> @Model.formaPago
+            </div>
+            <div class="col-sm-6">
+                <strong>Centro de Costo:</strong> @Model.idCentroCosto
+            </div>
+            <div class="clearfix"></div>
+            <hr style="border-color:#000 !important" />
+            <div class="col-sm-6">
+                <h3>Adquisiciones:</h3>
+                @if (Model.adquisiciones == null)
+                {
+                    <h3>No Hay Datos</h3>
+                    <br />
+                    if ((Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("adquisiciones")))){
+                        
+                        <a href="@Url.Action("agregarAdquisiciones", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Agregar Datos</a>
+                    }
+                }
+                else
+                {
+                    <strong>Orden de Compra:</strong> @Model.numeroOrdenCompra
+                    <br />
+                    <strong>Fecha de Orden de Compra:</strong> @Model.adquisiciones.fechaOrdenCompra.ToShortDateString()
+                    <br />
+                    <strong>Valor de Orden de Compra:</strong> @(new sarey_erp.Models.formatearString().valoresPesos(Model.adquisiciones.valorOrdenCompra.ToString()))
+                    <br />
+                    <strong>Observaciones:</strong> @Model.adquisiciones.observaciones
+                    <br />
+                    <strong>Usuario que agregó estos datos:</strong> @Model.adquisiciones.usuario.nombreCompleto
+                    <br />
+                    <br />
+                    if(Model.finanzas==null 
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("adquisiciones"))))
+                    {
+                        <a href="@Url.Action("editarAdquisiciones", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Editar Datos</a>
+                    }
+                }
+            </div>
+            <div class="col-sm-6">
+                <h3>Finanzas:</h3>
+                @if (Model.finanzas == null)
+                {
+                    <h3>No Hay Datos</h3>
+                    <br />
+                    if(Model.adquisiciones!=null
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("finanzas"))))
+                    {
+                        <a href="@Url.Action("agregarFinanzas", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Agregar Datos</a>
+                    }
+                }
+                else
+                {
+                    <strong>Modo de Pago:</strong> @Model.formaPago
+                    <br />
+                    <strong>N°:</strong> @Model.finanzas.numero
+                    <br />
+                    <strong>Fecha:</strong> @Model.finanzas.fecha.ToShortDateString()
+                    <br />
+                    <strong>Observaciones:</strong> @Model.finanzas.observaciones
+                    <br />
+                    <strong>Usuario que agregó estos datos:</strong> @Model.finanzas.usuario.nombreCompleto
+                    <br />
+                    <br />
+                    if(Model.contabilidad==null
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("finanzas"))))
+                    {
+                        <a href="@Url.Action("editarFinanzas", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Editar Datos</a>
+                    }
+                }
+            </div>
+            <div class="clearfix"></div>
+            <hr style="border-color:#000 !important" />
+            <div class="col-sm-6">
+                <h3>Contabilidad:</h3>
+                @if (Model.contabilidad == null)
+                {
+                    <h3>No Hay Datos</h3>
+                    <br />
+                    if (Model.finanzas != null
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("contabilidad"))))
+                    {
+                        <a href="@Url.Action("agregarContabilidad", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Agregar Datos</a>
+                    }
+
+                }
+                else
+                {
+                    <strong>Registro Nubox:</strong> @Model.contabilidad.registroNubox
+                    <br />
+                    <strong>N° CC:</strong> @Model.idCentroCosto
+                    <br />
+                    <strong>Cuenta:</strong> @Model.contabilidad.cuenta
+                    <br />
+                    <strong>Observaciones:</strong> @Model.contabilidad.observaciones
+                    <br />
+                    <strong>Usuario que agregó estos datos:</strong> @Model.contabilidad.usuario.nombreCompleto
+                    <br />
+                    <br />
+                    if(Model.retiraPago==null
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("contabilidad"))))
+                    {
+                        <a href="@Url.Action("editarContabilidad", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Editar Datos</a>
+                    }
+                }
+            </div>
+            <div class="col-sm-6">
+                <h3>Retira Pago:</h3>
+                @if (Model.retiraPago == null)
+                {
+                    <h3>No Hay Datos</h3>
+                    <br />
+                    if (Model.contabilidad != null
+                        && (Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("secretario(a)"))))
+                    {
+                        <a href="@Url.Action("agregarRetiraPago", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Agregar Datos</a>
+                    }
+                }
+                else
+                {
+                    <strong>Nombre:</strong> @Model.retiraPago.nombre
+                    <br />
+                    <strong>Rut:</strong> @Model.retiraPago.rut
+                    <br />
+                    <strong>Fecha:</strong> @Model.retiraPago.fecha.ToShortDateString()
+                    <br />
+                    <strong>Observaciones:</strong> @Model.retiraPago.observaciones
+                    <br />
+                    <strong>Usuario que agregó estos datos:</strong> @Model.retiraPago.usuario.nombreCompleto
+                    <br />
+                    <br />
+                    if(Session["rol"] != null
+                        && (Session["rol"].ToString().Equals("admin") || Session["rol"].ToString().Equals("secretario(a)")))
+                    {
+                        <a href="@Url.Action("editarRetiraPago", "HojaRuta", new { idOrdenCompra = @Model.numeroOrdenCompra, numeroFactura = @Model.numeroFactura })" class="btn btn-primary">Editar Datos</a>
+                    }
+                }
+            </div>
+            <div class="clearfix"></div>
+            <br class="hidden-xs" />
+            <div class="modal-footer">
+                <a href="@Url.Action("Index", "HojaRuta")" class="btn btn-lg btn-link"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> Volver</a>
+            </div>
+        </div>
+    </div>
+</div>

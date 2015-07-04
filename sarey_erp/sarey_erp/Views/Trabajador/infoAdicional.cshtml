@@ -1,0 +1,215 @@
+﻿@model sarey_erp.Models.infoadicional
+@{
+    ViewBag.Title = "infoAdicional";
+}
+<div class="content-wrapper">
+    <div class="row">
+        <div class="content">
+            <div class="col-md-12">
+                <form action="@Url.Action("guardarInfoComplementaria", "Trabajador")" role="form" method="post" enctype="multipart/form-data">
+                    <h2 class="text-center">Datos complementarios trabajador</h2>
+                    <div class="form-group">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Rut Trabajador</th>
+                                    <th>Estado civil</th>
+                                    <th>Nº Calzado</th>
+                                    <th>Talla Ropa</th>
+                                    <th>Grupo Sanguíneo</th>
+                                    <th>Alérgico</th>
+                                    <th>Personal destacado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-control" value="@Model.rut" name="rut" id="rut" maxlength="100" readonly></td>
+                                    <td>
+                                        <select class="form-control" name="estadoCivil" id="estadoCivil" required>
+                                            <option value="Soltero(a)">Soltero(a)</option>
+                                            <option value="Casado(a)">Casado(a)</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="nCalzado" id="nCalzado"  value="@Model.numero_calzado" maxlength="100" placeholder="" ></td>
+                                    <td><input type="text" class="form-control" name="talla" id="talla" value="@Model.talla_ropa" maxlength="100" placeholder="" ></td>
+                                    <td>
+                                       
+                                        <select class="form-control" name="grupoSangre" id="grupoSangre"  required>
+                                            @{if (@Model.grupo_sangre != null)
+                                                {
+                                                <option value="@Model.grupo_sangre">@Model.grupo_sangre</option>
+                                                }
+                                            }    
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="AB">AB</option>
+                                            <option value="0">0</option>
+                                        </select>
+                                            
+                                    </td>
+                                    <td><input type="text" class="form-control" value="@Model.alergico" name="alergico" id="alergico" maxlength="100" placeholder="" ></td>
+                                    <td>
+                                        <select class="form-control" name="destacado" id="destacado" required>
+                                        @{if (@Model.personal_destacado != null) { 
+                                            <option value="@Model.personal_destacado">@Model.personal_destacado</option>
+                                            }
+                                        }
+                                            <option value="SI">SI</option>
+                                            <option value="NO">NO</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                        <h3>Observaciones</h3>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="comment">Antecedentes de conducir</label>
+                                <textarea class="form-control" rows="2"  id="anteConducir" name="anteConducir" required>@Model.antecedentes_conducir</textarea>
+                            </div>
+                        </div>
+                        
+                        <br />
+                        <h3>Cargas Familiares</h3>
+                        @{if (@Model.carga != null) { 
+                        int index = 0;
+                        foreach (var x in @Model.carga)
+                        {
+                        <table id="familia" class="familia table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre Completo</th>
+                                    <th>Rut</th>
+                                    <th>Sexo</th>
+                                    <th>Edad</th>
+                                    <th>Carga Registrada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="form-control nombreCompleto" type="text"  value="@x.nombre_carga" name="nombreCompleto" id="nombreCompleto" placeholder="" required>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" value="@x.rut" name="rutCarga" id="rutCarga" placeholder="" required>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" name="sexo" id="sexo" required>
+                                            <option value="Masculino">Masculino</option>
+                                            <option value="Femenino">Femenino</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" value="@x.edad" name="edad" id="edad" placeholder="" required>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" value="@x.carga_registrada" name="cargaRegistrada" id="cargaRegistrada" placeholder="" required>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="remove-field btn btn-primary btn-xs">Remover</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                            index++;
+                        }
+                        }
+                        else
+                        {
+                            <table id="familia" class="familia table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre Completo</th>
+                                        <th>Rut</th>
+                                        <th>Sexo</th>
+                                        <th>Edad</th>
+                                        <th>Carga Registrada</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input class="form-control nombreCompleto" type="text"  name="nombreCompleto" id="nombreCompleto" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text"  name="rutCarga" id="rutCarga" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" name="sexo" id="sexo" required>
+                                                <option value="Masculino">Masculino</option>
+                                                <option value="Femenino">Femenino</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text"  name="edad" id="edad" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text"  name="cargaRegistrada" id="cargaRegistrada" placeholder="" required>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="remove-field btn btn-primary btn-xs">Remover</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                          }
+                        }
+                        <div class="row">
+                            <div class="col-md-2 col-md-offset-10">
+                                <button type="button" class="btn btn-primary btn-block add-field">Agregar Carga</button>
+                            </div>
+                        </div> 
+                        <br />   
+                            <div class="modal-footer">
+                                <a type="button" class="btn btn-default btn-lg" href="@Url.Action("todos","Trabajador")"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Cancelar</a>
+                                <button type="submit" class="btn btn-primary btn-lg" id="btn-nuevo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Guardar</button>
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script type="text/javascript">
+$(document).ready(function () {
+            $(".add-field").click(function () {
+
+                var $tableBody = $('#familia').find("tbody");
+                $trLast = $tableBody.find("tr:last");
+                $temp = $trLast.clone();//.appendTo($tableBody).find('input').val('').focus();
+                $temp.find('input').val('').end();
+              //  $temp.find('.select_item option').remove();
+                $trNew = $temp;
+                //$trNew = $trLast.clone().find(':input').val('').end();
+                $trLast.after($trNew);
+                contaritems();
+                return false;
+            });
+            $(document).on("click", ".remove-field", function () {
+                var cantidadItems = $('.nombreCompleto').length;
+                var element = this;
+                if (cantidadItems > 1) {
+
+                    esteTR = $(element).closest('tr');
+                    $(element).closest('tr').remove();
+
+                } else {
+                    alert("No puede eliminar este item")
+                }
+                //$(this).closest('tr').remove();
+               
+                return false;
+
+            });
+});
+$("#grupoSangre option").each(function () {
+    $(this).siblings("[value=" + this.value + "]").remove();
+});
+$("#destacado option").each(function () {
+    $(this).siblings("[value=" + this.value + "]").remove();
+});
+
+</script>
+}

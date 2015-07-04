@@ -1,0 +1,57 @@
+﻿@model List<sarey_erp.Models.orden_compra>
+@{
+    ViewBag.Title = "Administrar Ordenes de compra";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);
+}
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Ordenes de compra Reemplazadas</h2>
+    </div>
+
+    <div class="content">
+        @grid.GetHtml(
+            columns: grid.Columns(
+            grid.Column("numero_orden",
+            header: string.Format("N° Orden {0}", grid.SortColumn == "id" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+            grid.Column("fecha",
+            header: string.Format("Fecha {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+            grid.Column("observacion",
+            header: string.Format(" Observacion {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+
+            grid.Column("sub_total",
+            header: string.Format("Sub Total {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+            format: @<text>
+                @(new sarey_erp.Models.formatearString().valoresPesos(item.sub_total.ToString()))</text>,
+            style:"text-right"),
+
+            grid.Column("iva",
+            header: string.Format("Iva {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+            format:@<text>
+                @(new sarey_erp.Models.formatearString().valoresPesos(item.iva.ToString()))</text>,
+            style:"text-right"),
+
+            grid.Column("total",
+            header: string.Format("Total {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""),
+            format:@<text>
+                @(new sarey_erp.Models.formatearString().valoresPesos(item.total.ToString()))</text>,
+            style:"text-right"),
+
+            grid.Column("id_proveedor",
+            header: string.Format("ID Proveedor {0}", grid.SortColumn == "" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""))
+
+            
+
+             ), tableStyle: "table table-hover", footerStyle: "pagination")
+       
+
+        <div class="modal-footer">
+            <a href="@Url.Action("todas", "Ordendecompra")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-list text-success"></i>&nbsp;Ver Todas</a>
+            <a href="@Url.Action("Reemplazadas", "Ordendecompra")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-time text-danger"></i>&nbsp;Ver Reemplazadas</a>
+        </div>
+    </div>
+</div>
+
+

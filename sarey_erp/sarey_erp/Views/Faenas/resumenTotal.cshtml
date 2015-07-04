@@ -1,0 +1,86 @@
+﻿@model sarey_erp.Models.faena
+@{
+    ViewBag.Title = "resumen global";
+    decimal numericValue = 0;
+    string formatted="";
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Detalle de Totales</h2>
+    </div>
+    <div class="content">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            Valor Neto
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            Gastos Generales
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            Utilidades
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                           Subtotal
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            iva
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-bold text-center" style="border: 1px solid black !important">
+                            @{
+                                 numericValue = Convert.ToInt32(@Model.valor_neto);
+                                 formatted = numericValue.ToString("#,##0");
+                                 ViewBag.valor_neto = '$' + formatted;                                                                  
+                            }
+                            @ViewBag.valor_neto
+                            
+                        </td>
+                        <td class="text-bold text-center" style="border: 1px solid black !important">
+                            @{
+                                numericValue = Convert.ToInt32(@Model.gastos_generales);
+                                formatted = numericValue.ToString("#,##0");
+                                ViewBag.gastos_generales = '$' + formatted;                               
+                            }
+                            @ViewBag.gastos_generales
+                        </td>
+                        <td class="text-bold text-center" style="border: 1px solid black !important">
+                            @{
+                                numericValue = Convert.ToInt32(@Model.utilidades);
+                                formatted = numericValue.ToString("#,##0");
+                                ViewBag.utilidades = '$' + formatted;                               
+                            }
+                            @ViewBag.utilidades
+                        </td>
+                        <td class="text-bold text-center" style="border: 1px solid black !important">
+                            @{
+                                numericValue = Convert.ToInt32(@Model.subtotal);
+                                formatted = numericValue.ToString("#,##0");
+                                ViewBag.subtotal = '$' + formatted;                                
+                            }
+                            @ViewBag.subtotal
+                        </td>
+                        <td class="text-bold text-center" style="border: 1px solid black !important">
+                            @{
+                                numericValue = Convert.ToInt32(@Model.iva);
+                                formatted = numericValue.ToString("#,##0");
+                                ViewBag.iva = '$' + formatted;                                  
+                             }
+                            @ViewBag.iva
+                        </td>
+                    </tr>                            
+            </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("Index", "Faenas")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,380 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="content-wrapper">
+    <br class="hidden-xs" />
+    <div class="page-header text-center"><h1>Bienvenido <small>SAREY ERP</small></h1></div>
+    <div class="col-sm-6">
+        <div class="page-header text-center">
+            <h2>AFP</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            Nombre AFP
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Tasa AFP dependientes
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            SIS dependientes
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Tasa AFP independientes
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.afp> datosAFP = ViewBag.datosAFP;
+
+                        foreach (sarey_erp.Models.afp AFP in datosAFP)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @AFP.nombre_afp
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @AFP.tasa%
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @AFP.sis%
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @AFP.tasa_independientes%
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="page-header text-center">
+            <h2>Datos Asignación Familiar</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            TRAMO
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            MONTO
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Menor que
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Mayor que
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.asignacionFamiliar> datosAsignacion = ViewBag.datosAsignacion;
+
+                        foreach (sarey_erp.Models.asignacionFamiliar asignacion in datosAsignacion)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @asignacion.tramo
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @asignacion.monto
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @asignacion.menorQue
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @if(asignacion.mayorQue==0){
+                                        <text>-</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@asignacion.mayorQue</text>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="page-header text-center">
+            <h2>Datos Ahorro Previsional Voluntario</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            Descripción
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Valor
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.apv> datosAPV = ViewBag.apv;
+
+                        foreach (sarey_erp.Models.apv datoAPV in datosAPV)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @datoAPV.descripcion
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @datoAPV.valor
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="page-header text-center">
+            <h2>Indicadores Económicos</h2>
+        </div>
+        <div id="loading" class="text-center">
+            <img src="/Content/ajax-loader.gif" alt="Cargando Datos" />
+        </div>
+        <div id="indicadores" class="text-center hidden">
+            <h3>UF: <b id="UF"></b></h3>
+            <h3>Fecha: <b id="FECHA"></b></h3>
+        </div>
+        <br />
+        <div class="page-header text-center">
+            <h2>Datos Seguro de Cesantía AFC</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            Tipo de contrato
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Empleador
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Trabajador
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.seguroCesantia> datosSeguro = ViewBag.seguroCesantia;
+
+                        foreach (sarey_erp.Models.seguroCesantia seguro in datosSeguro)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @seguro.descripcion
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @seguro.empleador
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @seguro.trabajador
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="page-header text-center">
+            <h2>Rentas Topes Imponibles</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            Tipo de trabajador
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Valor
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.rentasTopesImponibles> datosRentasTopes = ViewBag.rentasTopes;
+
+                        foreach (sarey_erp.Models.rentasTopesImponibles rentaTope in datosRentasTopes)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @rentaTope.descripcion
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @rentaTope.valor
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-header text-center">
+            <h2>Rentas Mínimas Imponibles</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped text-center" style="border: 1px solid black; border-radius: 25px !important">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important">
+                            Tipo de trabajador
+                        </td>
+                        <td style="border: 1px solid black !important">
+                            Valor
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        List<sarey_erp.Models.rentasMinimasImponibles> datosRentasMinimas = ViewBag.rentasMinimas;
+
+                        foreach (sarey_erp.Models.rentasMinimasImponibles rentaMinima in datosRentasMinimas)
+                        {
+                            <tr>
+                                <td class="text-bold" style="border: 1px solid black !important">
+                                    @rentaMinima.descripcion
+                                </td>
+                                <td style="border: 1px solid black !important">
+                                    @rentaMinima.valor
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div><!-- /.content-wrapper -->
+
+@section scripts{
+    <script>
+
+    function formatearValor(valor) {
+        arregloUF = valor.replace(".", ",").split('');
+
+        inicioFor = arregloUF.length;
+        if (valor.includes(".")) {
+            for (i = 0; i < arregloUF.length; i++) {
+                if (arregloUF[i] == ',') {
+                    inicioFor = i;
+                }
+            }
+        }
+
+        retorno = "";
+
+        for (i = inicioFor - 1; i >= 0; i--) {
+            if (i == inicioFor - 3) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 6) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 9) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 12) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 15) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 18) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else if (i == inicioFor - 21) {
+                retorno = "." + arregloUF[i] + retorno;
+            }
+            else retorno = arregloUF[i] + retorno;
+        }
+
+        for (i = inicioFor; i < arregloUF.length; i++) {
+            retorno = retorno + arregloUF[i];
+        }
+
+        if (retorno.indexOf(".") == 0) {
+            retorno = retorno.substr(1);
+        }
+
+        return retorno;
+    }
+
+    @{
+            DateTime finDeMes = DateTime.Now;
+            int mes = finDeMes.Month;
+            DateTime temp =finDeMes;
+            while (temp.Month == mes) {
+                finDeMes = temp;
+                temp = temp.AddDays(1);
+            }
+
+            string dia = finDeMes.Day + "";
+            if (dia.Length == 1){
+                dia = "0" + dia;
+            }
+            string mesString = finDeMes.Month + "";
+            if (mesString.Length == 1)
+            {
+                mesString = "0" + mesString;
+            }
+            string año = finDeMes.Year +"";
+
+            string url = "http://www.mindicador.cl/api/uf/" + dia + "-" + mesString + "-" + año;
+        }
+
+    @{
+            DateTime ultimaUF = (DateTime)ViewBag.ultimaActualizacionUF;
+            }
+    @if((DateTime.Now - ultimaUF).TotalDays>=1){
+            <text>
+    $.getJSON('@(url)', function (data) {
+        var dailyIndicators = data;
+
+        uf = formatearValor(dailyIndicators.serie[0].valor + "");
+        FECHA = '@finDeMes.ToShortDateString()';
+
+        console.log(FECHA);
+
+        $("#UF").html(uf);
+        $("#FECHA").html(FECHA);
+        $("#indicadores").removeClass("hidden");
+        $("#loading").addClass("hidden");
+
+        $.ajax({
+            url: "/Home/guardarUltimaUF",
+            data: { "valor": uf }
+        });
+
+    }).fail(function () {
+    }); console.log('Error al consumir la API!');
+    </text>
+        }
+        else {
+            <text>
+        FECHA = '@finDeMes.ToShortDateString()';
+        $("#UF").html(@ViewBag.ultimaUF);
+    $("#FECHA").html(FECHA);
+    $("#indicadores").removeClass("hidden");
+    $("#loading").addClass("hidden");
+    </text>
+        }
+
+    </script>
+     }

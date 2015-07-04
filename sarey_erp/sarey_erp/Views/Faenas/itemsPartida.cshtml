@@ -1,0 +1,75 @@
+﻿@model List<sarey_erp.Models.partida>
+@{
+    ViewBag.Title = "Ítem de Partida de faena";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 25);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Ítems de Partida "@ViewBag.Partida", Faena "@ViewBag.Faena"</h2>
+    </div>
+
+    <div class="content">
+        <div class="table-responsive">
+            @grid.GetHtml(
+            columns: grid.Columns(
+
+                    grid.Column("id_partida",
+                    header: string.Format("ID de Partida {0}", grid.SortColumn == "id_partida" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("descripcion",
+                    header: string.Format("Descripción {0}", grid.SortColumn == "descripcion" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("unidad",
+                    header: string.Format("Unidad {0}", grid.SortColumn == "unidad" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("cantidad",
+                    header: string.Format("Cantidad {0}", grid.SortColumn == "cantidad" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("precio_unitario",
+                    header: string.Format("Precio Unitario {0}", grid.SortColumn == "precio_unitario" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos(item.precio_unitario.ToString()))
+                    </text>),
+
+                    grid.Column("total",
+                    header: string.Format("Total {0}", grid.SortColumn == "total" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos(item.total.ToString()))
+                    </text>),
+
+                    grid.Column("",
+                    header: string.Format("Gastos Totales {0}", grid.SortColumn == "id_partida" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos(Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales().ToString()))
+                    </text>),
+
+                    grid.Column("",
+                    header: string.Format("Saldo {0}", grid.SortColumn == "precio_unitario" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos((item.total - Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales()).ToString()))
+                    </text>),
+
+                    grid.Column("",
+                    header: "Ver Materiales",
+                    format: @<text>
+                            <a href="@Url.Action("materialesItem", "Faenas", new { Faena = ViewBag.Faena, Partida = item.id_partida })"><span class='glyphicon glyphicon-list-alt text-primary'></span></a>
+                        </text>),
+
+                    grid.Column("",
+                    header: "Ver Detalle de Gastos",
+                    format: @<text>
+                        @if (Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales()>0)
+                        {
+                            <a href="@Url.Action("detalleGastosItem", "Faenas", new { nombreFaena = ViewBag.Faena, idPartida = item.id_partida })"><span class='glyphicon glyphicon-list-alt text-primary'></span></a>
+                        }                        
+                    </text>)           
+
+                    ), tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("partidasGlobal", "Faenas", new { Faena = @ViewBag.Faena })" type="button" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>

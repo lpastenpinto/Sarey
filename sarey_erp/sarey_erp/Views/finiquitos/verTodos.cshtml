@@ -1,0 +1,48 @@
+﻿@model List<sarey_erp.Models.finiquitos>
+@{
+    ViewBag.Title = "Finiqutos";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 10);   
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="header text-center">
+        <h2>Lista Finiquitos Trabajadores</h2>
+    </div>
+    <div class="content">       
+        <div class="table-responsive">
+            @grid.GetHtml(
+                columns: grid.Columns(
+                grid.Column("rut",
+                header: string.Format("Rut {0}", grid.SortColumn == "rut" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")),
+              
+                 grid.Column(
+                    "nombre_completo",
+                     header: string.Format("Nombre Trabajador {0}", grid.SortColumn == "nombre_completo" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+                
+                grid.Column(
+                    "motivo",
+                     header: string.Format("Motivo {0}", grid.SortColumn == "motivo" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+               
+                 grid.Column(
+                    "fecha_finiquito",
+                     header: string.Format("Fecha Finiquito {0}", grid.SortColumn == "fecha_finiquito" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : "")
+                ),
+               
+                grid.Column("",
+                    header: "Ver Detalle",
+                    format: @<text>
+                        <a href="@Url.Action("verDetalle", "finiquitos", new { rut = @item.rut })" title="Ver"><i class='glyphicon glyphicon-remove-circle'></i></a>
+                    </text>)
+
+), tableStyle: "table table-hover", footerStyle: "pagination")
+
+
+        </div>       
+
+    </div>
+
+</div>
+      

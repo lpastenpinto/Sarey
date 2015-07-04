@@ -1,0 +1,51 @@
+﻿@model List<sarey_erp.Models.datosResumenFaena>
+@{
+    ViewBag.Title = "resumen global";
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Detalle de Gastos</h2>
+    </div>
+    <div class="content">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="text-bold">
+                    <tr>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            TIPO DE MATERIAL
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            CÓDIGO
+                        </td>
+                        <td style="border: 1px solid black !important" class="text-center">
+                            PRESUPUESTO ASIGNADO
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (sarey_erp.Models.datosResumenFaena datos in Model)
+                        {
+                            <tr>
+                                <td class="text-bold text-center" style="border: 1px solid black !important">
+                                    @datos.nombre
+                                </td>
+                                <td style="border: 1px solid black !important" class="text-center">
+                                    @datos.tipo
+                                </td>
+                                <td style="border: 1px solid black !important" class="text-right">
+                                    @(new sarey_erp.Models.formatearString().valoresPesos(datos.total))
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("Index", "Faenas")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>

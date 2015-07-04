@@ -1,0 +1,322 @@
+﻿@{
+    ViewBag.Title = "Nuevo Trabajador";
+}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          
+            <h3 class="text-center">Agregar Nuevo Trabajador</h3>
+            <br />           
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="@Url.Action("agregarNuevo","Trabajador")" class="form-horizontal"  role="form" method="post" enctype="multipart/form-data" >
+
+                        <div id="divRut" class="form-group">
+                            <label class="control-label">Rut</label>
+                            <input class="form-control" type="text" id="rut" name="rut" required />
+                            <span id="spanInputRut" class="glyphicon form-control-feedback"></span>
+                            <div id="mensajeErrorRut" class="alert alert-danger hidden">
+                                <strong>Error: </strong> Rut no valido
+                            </div>
+                            <div id="mensajeExisteRut" class="alert alert-danger hidden">
+                                <strong>Error: </strong> Rut ya fue ingresado en el sistema
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Nombres</label>
+                            <input class="form-control" type="text" id="nombres" name="nombres" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Apellidos</label>
+                            <input class="form-control" type="text" id="apellidos" name="apellidos" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Fecha de Ingreso Empresa</label>
+                            <input class="form-control fecha"  name="fechaIngresoEmpresa" id="fechaIngresoEmpresa"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                   type="text" required>                            
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Fecha de Ingreso al sistema</label>
+                            <input class="form-control fecha" name="fechaIngresoSistema" id="fechaIngresoSistema"
+                                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                                   type="text" required>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Direccion</label>
+                            <input class="form-control" type="text" id="direccion" name="direccion" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Telefono</label>
+                            <input class="form-control" type="text" id="telefono" name="telefono" required />
+                        </div>
+                        <div id="divArchivo" class="form-group">
+                            <label class="control-label">Imagen Cedula Identidad</label>
+                            <input class="form-control" type="file" id="file" name="file" accept="image/*">                           
+                        </div> 
+
+                        <div class="form-group">
+                            <label class="control-label">Cargo</label>
+                            <input class="form-control" type="text" id="cargo" name="cargo" required/>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label class="control-label">Obra</label>
+                            <select class="form-control" name="obra" id="obra" required>
+                                @foreach (sarey_erp.Models.faena Faena in (List<sarey_erp.Models.faena>)ViewData["obras"])
+                                {
+                                    <option value="@Faena.nombre">@Faena.nombre</option>
+                                }
+                            </select>
+                        </div>
+                                                   
+                        <div class="form-group">
+                            <label class="control-label">Tipo Regimen</label>
+                            <select class="form-control" name="tipo_regimen" id="tipo_regimen">
+                                <option value="Nuevo">Nuevo</option>
+                                <option value="Antiguo">Antiguo</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="divPorcentajeAFC" hidden>
+                            <label class="control-label">% AFC</label>
+                            <input class="form-control decimal" type="text" id="porcentajeAFC" name="porcentajeAFC" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">APV</label>
+                            <select class="form-control" name="apv" id="apv">
+                                <option value="No">No</option>
+                                <option value="Si">Si</option>                                
+                            </select>                            
+                        </div>
+
+                        <div class="form-group" id="divPorcentajeAPV" hidden>
+                            <label class="control-label">% APV</label>                           
+                            <input class="form-control decimal" type="text" id="porcentajeAPV" name="porcentajeAPV" />                                                       
+                        </div>
+
+                                
+                        <div class="form-group">
+                            <label class="control-label">AFP</label>
+                            <select class="form-control"  name="afp" id="afp" required>                                
+                               @foreach (sarey_erp.Models.afp AFP in (List<sarey_erp.Models.afp>)ViewData["listaAFP"])
+                               {
+                                <option value="@AFP.nombre_afp">@AFP.nombre_afp</option>
+                               }
+                            </select>
+                         </div>
+                        <div class="form-group" id="divPorcentajeAFP" hidden>
+                            <label class="control-label">% AFP</label>
+                            <input class="form-control decimal" type="text" id="porcentajeAFP" name="porcentajeAFP" />
+                        </div>
+                            
+
+                        <div class="form-group">
+                            <label class="control-label">Salud</label>
+                            <select class="form-control" name="salud" id="salud" required>
+                                <option value="Fonasa">Fonasa</option>
+                                @foreach (sarey_erp.Models.isapre ISAPRE in (List<sarey_erp.Models.isapre>)ViewData["listaIsapres"])
+                                {
+                                    <option value="@ISAPRE.nombre_isapre">@ISAPRE.nombre_isapre</option>
+                                }
+
+                                                                
+                            </select>
+                        </div>
+                        <div class="form-group" id="divPorcentajeSalud" hidden>
+                            <label class="control-label"> Plan Isapre Cantidad UF</label>
+                            <input class="form-control decimal" type="text" id="porcentajeSalud" name="porcentajeSalud" placeholder="0"/><span>(Si el plan es del 7% ingrese 0)</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Tipo Contrato</label>
+                            <select class="form-control" name="tipo_contrato" id="tipo_contrato">
+                                <option value="Fijo">Fijo</option>
+                                <option value="Indefinido">Indefinido</option>
+                            </select>
+                        </div>                       
+                       
+                                                                                                                                                                                 
+                        <div class="modal-footer">
+                            <button id="boton" type="submit" class="btn btn-primary btn-lg">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            
+            
+
+            $('#rut').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[k]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $('.decimal').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9]*|[,]*)$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $("#apv").change(function () {
+                var apv = $("#apv").val();
+                if (apv == "Si") {
+                    $("#divPorcentajeAPV").removeAttr("hidden");
+                    
+                } else {
+                    $("#divPorcentajeAPV").attr("hidden", "hidden");
+                        
+                }
+
+            });
+
+            $("#salud").change(function () {
+                var salud = $("#salud").val();
+                if (salud == "Fonasa") {
+                    
+                    $("#divPorcentajeSalud").attr("hidden", "hidden");
+                } else {
+                   
+                    $("#divPorcentajeSalud").removeAttr("hidden");
+                }
+
+            });
+
+
+            $("#tipo_regimen").change(function () {
+                var regimen = $("#tipo_regimen").val();                
+                if (regimen == 'Antiguo') {                   
+                    $("#divPorcentajeAFP").removeAttr("hidden");                    
+                    $("#divPorcentajeAFC").removeAttr("hidden");
+
+                 $("#divPorcentajeSalud").removeAttr("hidden");} else {
+                    $("#divPorcentajeAFP").attr("hidden", "hidden");
+                   
+                    $("#divPorcentajeAFC").attr("hidden", "hidden");
+                }
+
+            });
+            $("#rut").change(function () {
+
+                var rut = $("#rut").val();
+            
+                if (validaRut(rut) == true) {
+                    $("#divRut").removeClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").addClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-ok");
+                    $("#spanInputRut").removeClass("glyphicon-remove");
+                    $("#mensajeErrorRut").addClass("hidden");
+                    $("#boton").removeAttr("disabled");
+                    
+                    $.ajax({
+                        url: "/Trabajador/verificarExisteTrabajador",
+                        data: { "rut": $("#rut").val() },
+
+                        success: function (retorno) {
+                            if (retorno == 'false') {
+                                $("#divRut").removeClass(" has-error");
+                                $("#divRut").addClass(" has-feedback");
+                                $("#divRut").addClass(" has-success");
+                                $("#spanInputRut").addClass("glyphicon-ok");
+                                $("#spanInputRut").removeClass("glyphicon-remove");
+                                $("#mensajeExisteRut").addClass("hidden");
+                                $("#boton").removeAttr("disabled");
+                            } else {
+                                $("#divRut").addClass(" has-error");
+                                $("#divRut").addClass(" has-feedback");
+                                $("#divRut").removeClass(" has-success");
+                                $("#spanInputRut").addClass("glyphicon-remove");
+                                $("#spanInputRut").removeClass("glyphicon-ok");
+                                $("#mensajeExisteRut").removeClass("hidden");
+                                $("#boton").attr("disabled", "disabled");
+                            }
+                        }
+                    });
+
+
+
+                } else {
+                    $("#divRut").addClass(" has-error");
+                    $("#divRut").addClass(" has-feedback");
+                    $("#divRut").removeClass(" has-success");
+                    $("#spanInputRut").addClass("glyphicon-remove");
+                    $("#spanInputRut").removeClass("glyphicon-ok");
+                    $("#mensajeErrorRut").removeClass("hidden");
+                    $("#mensajeExisteRut").removeClass("hidden");
+                    $("#mensajeExisteRut").addClass("hidden");
+                    $("#boton").attr("disabled", "disabled");
+                }
+                       
+
+            });
+        });
+
+        function validaRut(campo) {
+            if (campo.length == 0) { return false; }
+            if (campo.length < 8) { return false; }
+
+            campo = campo.replace('-', '')
+            campo = campo.replace(/\./g, '')
+            $("#rut").val(campo);
+
+            var suma = 0;
+            var caracteres = "1234567890kK";
+            var contador = 0;
+            for (var i = 0; i < campo.length; i++) {
+                u = campo.substring(i, i + 1);
+                if (caracteres.indexOf(u) != -1)
+                    contador++;
+            }
+            if (contador == 0) { return false }
+
+            var rut = campo.substring(0, campo.length - 1)
+            var drut = campo.substring(campo.length - 1)
+            var dvr = '0';
+            var mul = 2;
+
+            for (i = rut.length - 1 ; i >= 0; i--) {
+                suma = suma + rut.charAt(i) * mul
+                if (mul == 7) mul = 2
+                else mul++
+            }
+            res = suma % 11
+            if (res == 1) dvr = 'k'
+            else if (res == 0) dvr = '0'
+            else {
+                dvi = 11 - res
+                dvr = dvi + ""
+            }
+            if (dvr != drut.toLowerCase()) { return false; }
+            else { return true; }
+        }
+
+
+
+    </script>    
+}

@@ -1,0 +1,64 @@
+﻿@model List<sarey_erp.Models.partidaGlobal>
+@{
+    ViewBag.Title = "Partidas de faena";
+    WebGrid grid = new WebGrid(Model, rowsPerPage: 25);
+}
+
+<div class="content-wrapper">
+    <br />
+    <div class="page-header">
+        <h2 class="text-center">Partidas de Faena "@ViewBag.Faena"</h2>
+    </div>
+
+    <div class="content">
+        <div class="table-responsive">
+            @grid.GetHtml(
+            columns: grid.Columns(
+
+                    grid.Column("id",
+                    header: string.Format("ID {0}", grid.SortColumn == "id" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("nombre",
+                    header: string.Format("Nombre {0}", grid.SortColumn == "nombre" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted"),
+
+                    grid.Column("",
+                    header: string.Format("Presupuesto {0}", grid.SortColumn == "nombre" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos(Model[item.WebGrid.Rows.IndexOf(item)].obtenerPresupuesto().ToString()))
+                    </text>),
+
+                    grid.Column("",
+                    header: string.Format("Gastos Totales {0}", grid.SortColumn == "nombre" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos(Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales().ToString()))
+                    </text>),
+
+                    grid.Column("",
+                    header: string.Format("Saldo {0}", grid.SortColumn == "nombre" ? grid.SortDirection == SortDirection.Ascending ? "⇈" : "⇊" : ""), style: "text-muted text-right",
+                    format: @<text>
+                        @(new sarey_erp.Models.formatearString().valoresPesos((Model[item.WebGrid.Rows.IndexOf(item)].obtenerPresupuesto() - Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales()).ToString()))
+                    </text>),
+
+                    grid.Column("",
+                        header: "Ver Ítems",
+                        format: @<text>
+                            @if (!item.nombre.Equals("admin"))
+                            {
+                                <a href="@Url.Action("itemsPartida", "Faenas", new { Faena = ViewBag.Faena, PartidaGlobal = item.id })"><span class='glyphicon glyphicon-list-alt text-primary'></span></a>
+                            }
+                        </text>),
+                    grid.Column("",
+                        header: "Ver Detalle de Gastos",
+                        format: @<text>
+                            @if ((Model[item.WebGrid.Rows.IndexOf(item)].obtenerGastosTotales()) > 0)
+                            {
+                                <a href="@Url.Action("detalleGastosPartida", "Faenas", new { nombreFaena = ViewBag.Faena, numeroPartida = item.id })"><span class='glyphicon glyphicon-list-alt text-primary'></span></a>
+                            }
+                        </text>)
+                    ), tableStyle: "table table-hover table-bordered table-striped", footerStyle: "pagination")
+        </div>
+        <div class="modal-footer">
+            <a href="@Url.Action("Index", "Faenas")" type="button" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left "></i>&nbsp;Volver</a>
+        </div>
+    </div>
+</div>
